@@ -1,0 +1,5 @@
+truetype = "SourceCodePro-Light.ttf"
+size = 46
+
+spacing = 0.01
+preloadedPages = { 0 }
