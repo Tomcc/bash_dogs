@@ -54,7 +54,9 @@ namespace bash_dogs {
 
 		LL_FADER,
 
-		LL_DEBUG
+		LL_DEBUG,
+
+		LL_MAIN_WINDOW
 	};
 }
 
