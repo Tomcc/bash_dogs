@@ -12,6 +12,8 @@ Mesh* bash_dogs::File::_meshForState(ResourceGroup& rg, State state, Type type) 
 		return rg.getMesh("unknownFile");
 	case bash_dogs::File::FS_LOCKED:
 		return rg.getMesh("lockedFile");
+	case FS_DELETED:
+		return rg.getMesh("deletedFile");
 	case bash_dogs::File::FS_OPEN:
 		switch (type)
 		{

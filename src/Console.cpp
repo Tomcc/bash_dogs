@@ -44,32 +44,75 @@ level(level) {
 	command.resize(256);
 
 	//initialize commands
-	command[KC_A] = Command("alert-system", { { KC_F, "foo" }, { KC_B, "bar" } });
-	command[KC_B] = Command("ban", { { KC_F, "foo" }, { KC_B, "bar" } });
-	command[KC_C] = Command("changedir", { { KC_F, "foo" }, { KC_B, "bar" } });
-	command[KC_D] = Command("delete", { { KC_F, "foo" }, { KC_B, "bar" } });
-	command[KC_E] = Command("entropy", { { KC_F, "foo" }, { KC_B, "bar" } });
-	command[KC_F] = Command("filesystem", { { KC_F, "foo" }, { KC_B, "bar" } });
-	command[KC_G] = Command("goto", { { KC_F, "foo" }, { KC_B, "bar" } });
-	command[KC_H] = Command("hide", { { KC_F, "foo" }, { KC_B, "bar" } });
-	command[KC_I] = Command("install-get", { { KC_F, "foo" }, { KC_B, "bar" } });
-	command[KC_J] = Command("jump-to", { { KC_F, "foo" }, { KC_B, "bar" } });
-	command[KC_K] = Command("key-generate", { { KC_F, "foo" }, { KC_B, "bar" } });
-	command[KC_L] = Command("list-files", { { KC_F, "foo" }, { KC_B, "bar" } });
-	command[KC_M] = Command("mount-fs", { { KC_F, "foo" }, { KC_B, "bar" } });
-	command[KC_N] = Command("network-map", { { KC_F, "foo" }, { KC_B, "bar" } });
-	command[KC_O] = Command("open", { { KC_F, "foo" }, { KC_B, "bar" } });
-	command[KC_P] = Command("perl", { { KC_F, "foo" }, { KC_B, "bar" } });
-	command[KC_Q] = Command("quit", {});
-	command[KC_R] = Command("rtfm", { { KC_F, "foo" }, { KC_B, "bar" } });
-	command[KC_S] = Command("sort", { { KC_F, "foo" }, { KC_B, "bar" } });
-	command[KC_T] = Command("tar-lz", { { KC_F, "foo" }, { KC_B, "bar" } });
-	command[KC_U] = Command("unlink", { { KC_F, "foo" }, { KC_B, "bar" } });
-	command[KC_V] = Command("view", { { KC_F, "foo" }, { KC_B, "bar" } });
-	command[KC_W] = Command("wget", { { KC_F, "foo" }, { KC_B, "bar" } });
-	command[KC_X] = Command("x-conf", { { KC_F, "foo" }, { KC_B, "bar" } });
-	command[KC_Y] = Command("yzf", { { KC_F, "foo" }, { KC_B, "bar" } });
-	command[KC_Z] = Command("zip", { { KC_F, "foo" }, { KC_B, "bar" } });
+
+	//
+	command[KC_A] = Command("alert-system", { { KC_F, "fire-splines" }, { KC_S, "security-splice" } }, 
+		"");
+
+	command[KC_B] = Command("ban", { { KC_N, "--no-mercy" }, { KC_D, "delete-userdir" }, { KC_B, "bash" } }, 
+		"");
+	
+	command[KC_C] = Command("changedir", { { KC_S, "shell-builtin" }, { KC_G, "globpath" }, { KC_A, "action=builtin" } },
+		"Jumps to an open file or directory");
+
+	//deletes a file or directory
+	command[KC_D] = Command("delete", { { KC_R, "recursive" }, { KC_I, "ignore-fail-on-non-empty" }, { KC_P, "parents" } },
+		"Deletes an open file or directory");
+
+	command[KC_E] = Command("entropy", { { KC_R, "reticulate-splines" }, { KC_I, "instruct-object" } },
+		"Teleports the opponent at random");
+
+	command[KC_F] = Command("filesystem-check", { { KC_F, "fragcheck=YES" }, { KC_D, "discard" }, { KC_L, "l=DIRECTORY_LOCK" } },
+		"Restores a deleted file");
+
+	command[KC_G] = Command("goto", { { KC_F, "foo" }, { KC_B, "bar" } },
+		"");
+
+	command[KC_H] = Command("hide", { { KC_F, "foo" }, { KC_B, "bar" } },
+		"Make an open or locked file unknown");
+
+	command[KC_I] = Command("install-get", { { KC_F, "foo" }, { KC_B, "bar" } },
+		"");
+
+	command[KC_J] = Command("jump-to", { { KC_S, "--skip-subdir" }, { KC_N, "no-symlinks" }, { KC_Z, "zap-tree" } },
+		"");
+
+	command[KC_K] = Command("key-generate", { { KC_F, "foo" }, { KC_B, "bar" } },
+		"Unlocks a locked file");
+
+	command[KC_L] = Command("list-files", { { KC_F, "foo" }, { KC_B, "bar" } },
+		"If in a folder, discovers all files");
+
+	command[KC_M] = Command("mount-fs", { { KC_M, "make-runbindable" }, { KC_B, "bind=/dev/root/usr" }, { KC_N, "no-canonicalize" } },
+		"");
+	
+	command[KC_N] = Command("network-map", { { KC_E, "exclude-external" }, { KC_O, "open|closed" }, { KC_T, "top-ports" } },
+		"Shows a part of the network");
+	
+	command[KC_O] = Command("open", { { KC_F, "foo" }, { KC_B, "bar" } },"");
+	command[KC_P] = Command("perl", { { KC_F, "foo" }, { KC_B, "bar" } },"");
+
+	command[KC_Q] = Command("quit", { { KC_A, "are-you-sure=Y/N" } },
+		"Quits the game");
+
+	command[KC_R] = Command("rtfm", { { KC_D, "dude" }, { KC_G, "gpresult" }, { KC_E, "endlocal" } },
+		"Prints out this list");
+
+	command[KC_S] = Command("sort", { { KC_F, "foo" }, { KC_B, "bar" } },"");
+	command[KC_T] = Command("tar-lz", { { KC_F, "foo" }, { KC_B, "bar" } },"");
+
+	command[KC_U] = Command("unlink", { { KC_F, "foo" }, { KC_B, "bar" } },
+		"Makes a known file unknown");
+
+	command[KC_V] = Command("view", { { KC_F, "foo" }, { KC_B, "bar" } },
+		"Makes an unknown file known");
+
+	command[KC_W] = Command("wget", { { KC_F, "foo" }, { KC_B, "bar" } },
+		"Starts a download to transfer the file to the attacker");
+	
+	command[KC_X] = Command("x-conf", { { KC_F, "foo" }, { KC_B, "bar" } },"");
+	command[KC_Y] = Command("yzf", { { KC_F, "foo" }, { KC_B, "bar" } },"");
+	command[KC_Z] = Command("zip", { { KC_F, "foo" }, { KC_B, "bar" } },"");
 
 	ASCII.resize(256);
 	ASCII[KC_A] = 'A';
@@ -129,6 +172,7 @@ void bash_dogs::Console::backspace() {
 	auto old = getLastLine().getContent();
 	getLastLine().clearText();
 	getLastLine().addText(old.substr(0, old.size() - 1));
+	getLastLine().setVisibleCharacters(getLastLine().getContent().size());
 
 	if (isCurrentState(CS_NORMAL)) {
 		commandText.resize(commandText.size() - 1);
@@ -144,7 +188,7 @@ bash_dogs::Console::Line bash_dogs::Console::newLine(const String& author) {
 		if (lines.size() > 20) {
 
 			if (getLastLine().position.y < -9) {
-				lines.front()->dispose = true;
+				//lines.front()->dispose = true;
 				lines.erase(lines.begin());
 
 				for (auto l : lines)
@@ -282,9 +326,21 @@ void bash_dogs::Console::onAction(float dt) {
 
 	characterRefresh += dt;
 	if (characterRefresh > 0.015f) {
+		bool atLeastOneNewChar = false;
 		for (auto& l : lines) {
-			l->setVisibleCharacters(l->getVisibleCharacters() + 1);
+			int totalChars = l->getContent().size();
+
+			if (totalChars >= l->getVisibleCharacters()) {
+				l->setVisibleCharacters(l->getVisibleCharacters() + 1);
+				atLeastOneNewChar = true;
+			}
 		}
+
+		static int idx = 0;
+		++idx;
+		if (atLeastOneNewChar && idx % 1 == 0)
+			Platform::getSingleton()->getSoundManager()->playSound(getGameState()->getSound("coin"), 0.1f);
+
 		characterRefresh = 0;
 	}
 

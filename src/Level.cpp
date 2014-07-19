@@ -192,6 +192,7 @@ void Level::onEnd()
 	Platform::getSingleton()->getRender()->removeAllRenderables();
 	Platform::getSingleton()->getRender()->removeAllViewports();
 	Platform::getSingleton()->getInput()->removeListener(this);
+	Platform::getSingleton()->getSoundManager()->stopAllSounds();
 	Platform::getSingleton()->getSoundManager()->stopMusic();
 
 	for (auto d : Platform::getSingleton()->getInput()->getDeviceList() )

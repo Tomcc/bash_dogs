@@ -26,12 +26,14 @@ namespace bash_dogs {
 		struct Command {
 			String command;
 			std::unordered_map<int, String> parameters;
+			String helpText;
 
 			Command() {}
 
-			Command(const String& command, const std::unordered_map<int, String>& parameters) :
+			Command(const String& command, const std::unordered_map<int, String>& parameters, const String& help) :
 				command(command),
-				parameters(parameters) {
+				parameters(parameters),
+				helpText(help) {
 			}
 
 			String getParam(int action);

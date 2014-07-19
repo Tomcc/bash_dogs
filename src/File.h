@@ -11,7 +11,8 @@ namespace bash_dogs {
 		enum State {
 			FS_UNKNOWN,
 			FS_LOCKED,
-			FS_OPEN
+			FS_OPEN,
+			FS_DELETED
 		};
 
 		enum Type {
