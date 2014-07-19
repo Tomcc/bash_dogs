@@ -29,6 +29,11 @@ void Level::onBegin()
 	auto renderer = Platform::getSingleton()->getRender();
 	renderer->getLayer((int)Layers::LL_WIREFRAME)->wireframe = true;
 	renderer->getLayer((int)Layers::LL_GRAPH)->wireframe = true;
+	
+	auto layer3D = renderer->getLayer((int)Layers::LL_BACKGROUND);
+	layer3D->depthCheck = false;
+	layer3D->depthClear = true;
+	layer3D->projectionOff = false;
 
 	loadResources();
 
@@ -112,6 +117,48 @@ void Level::onBegin()
 
 	r->color = Color::WHITE;
 	addChild(r, (int)Layers::LL_MAIN_WINDOW);
+
+
+	//make lines
+	{
+		Mesh* gridLines = new Mesh();
+
+		gridLines->setVertexFieldEnabled(Mesh::VF_POSITION3D);
+		gridLines->setVertexFieldEnabled(Mesh::VF_COLOR);
+		gridLines->setTriangleMode(Mesh::TM_LINE_LIST);
+
+		gridLines->begin();
+
+		float y = 0.f;
+		float s = 40.f;
+		float ss = s * 2;
+		float a = 0.6f;
+		for (int i = 0; i < (int)ss; ++i) {
+			float aa = powf((1.f - ((i + 2) / ss)), 3) * a;
+			gridLines->vertex(-ss, y, -i);
+			gridLines->color(1, 1, 1, aa);
+			gridLines->vertex(ss, y, -i);
+			gridLines->color(1, 1, 1, aa);
+		}
+
+		for (int i = -(int)ss; i < (int)ss; ++i) {
+			gridLines->vertex(i, y, 0.f);
+			gridLines->color(1, 1, 1, 1 * a);
+			gridLines->vertex(i, y, -ss);
+			gridLines->color(1, 1, 1, 0);
+		}
+
+		gridLines->end();
+
+		r = new Renderable(this, Vector(0,-7.f, 0), gridLines);
+		r->scale = 3;
+		addChild(r, (int)Layers::LL_BACKGROUND);
+
+
+		r = new Renderable(this, Vector(0, 7.f, 0), gridLines);
+		r->scale = 3;
+		addChild(r, (int)Layers::LL_BACKGROUND);
+	}
 }
 
 bool bash_dogs::Level::connect(const String& address) {
@@ -173,6 +220,7 @@ void Level::onStateEnd()
 }
 
 void bash_dogs::Level::onButtonPressed(Dojo::InputDevice* j, int action) {
+
 	auto finishedLine = console->onKeyPressed(action);
 
 	if (finishedLine) {
@@ -192,6 +240,14 @@ void bash_dogs::Level::onButtonPressed(Dojo::InputDevice* j, int action) {
 			});
 		}
 	}
+
+	SoundSet* keySound;
+	if (action == KC_RETURN || action == KC_SPACE || action == KC_TAB || action == KC_RSHIFT || action == KC_LSHIFT || action == KC_BACK)
+		keySound = getSound("keypress_wide");
+	else
+		keySound = getSound("keypress");
+
+	Platform::getSingleton()->getSoundManager()->playSound(keySound, 0.5f);
 }
 
 void Level::onButtonReleased(Dojo::InputDevice* j, int action) {

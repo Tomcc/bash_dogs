@@ -3,6 +3,7 @@
 #include "common_header.h"
 
 #include "Server.h"
+#include "FileSystem.h"
 
 namespace Poco {
 	namespace Net {
@@ -31,6 +32,8 @@ namespace bash_dogs {
 		Unique<Poco::Net::StreamSocket> clientSocket;
 
 		std::mutex clientSocketMutex;
+
+		Unique<FileSystem> masterFileSystem;
 
 		String _dispatchCommand(const String& command);
 

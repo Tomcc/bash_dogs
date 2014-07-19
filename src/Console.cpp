@@ -25,7 +25,10 @@ level(level) {
 	newLine();
 	newLine();
 
-	write("Welcome To HAXEOR TERMINAL (c)2055");
+	write("Welcome To HAXXOR TERMINAL");
+	newLine();
+
+	write("  (c)2054 T.C. - G.P.");
 	newLine();
 
 	write("TYPE SHIT TO HACKER");

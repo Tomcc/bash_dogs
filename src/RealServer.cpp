@@ -29,7 +29,7 @@ Dojo::String bash_dogs::RealServer::_dispatchCommand(const String& line) {
 	String command = line.substr(0, line.find_first_of(' '));
 
 	if (command == String("network-map") ) {
-		return "LOL";
+		
 	}
 	return "Error";
 }
