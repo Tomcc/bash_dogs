@@ -1,0 +1,9 @@
+
+--windowSize = (1024 768 0)
+
+skip_intro
+
+default_address = "LOCALHOST"
+default_username = "TOMMO"
+
+music = 1

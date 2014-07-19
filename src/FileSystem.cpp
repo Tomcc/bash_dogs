@@ -14,8 +14,10 @@ graphics(graphics) {
 
 	root = new File(*this, Vector::ZERO, "ROOT", File::T_FOLDER, File::FS_OPEN );
 
-	if (graphics)
+	if (graphics) {
 		addChild(root);
+		root->select(true);
+	}
 }
 
 void bash_dogs::FileSystem::_makeSubFile(File& parent, int step, int& cachesPlaced, std::vector<File*>& nodes) {

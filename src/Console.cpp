@@ -217,11 +217,12 @@ level(level) {
 		"zip",
 		{ "foo", "bar" }, "");
 
-	logo = { " _____ _____ _____ _____       ____  _____ _____ _____ ",
+	logo = {
+		" _____ _____ _____ _____       ____  _____ _____ _____ ",
 		"| __  |  _  |   __|  |  |     |    \|     |   __|   __|",
 		"| __ -|     |__   |     |     |  |  |  |  |  |  |__   |",
 		"|_____|__|__|_____|__|__|_____|____/|_____|_____|_____|",
-		"                        |_____|           ", };
+		"                        |_____|                 ", };
 
 	cursor = new TextArea(this, "debugFont", Vector::ZERO);
 	cursor->addText("_");
@@ -484,7 +485,7 @@ void bash_dogs::Console::onAction(float dt) {
 	loop(dt);
 
 	blink += dt;
-	if (blink > 0.5f) {
+	if (blink > rythmDuration) {
 		cursor->setVisible(!cursor->isVisible());
 		blink = 0;
 	}

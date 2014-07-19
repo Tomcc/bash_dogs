@@ -40,6 +40,8 @@ using std::make_unique;
 #endif
 using std::make_shared;
 
+extern float rythmDuration;
+
 template<typename T, typename M>
 std::unique_ptr<T>&& unique_cast(std::unique_ptr<M>& in) {
 	return std::unique_ptr<T>((T*)in.release());

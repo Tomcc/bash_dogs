@@ -43,6 +43,8 @@ namespace bash_dogs {
 			return subFiles;
 		}
 
+		void select(bool selected);
+
 	protected:
 		TextArea* label;
 		Renderable* icon;
@@ -51,6 +53,9 @@ namespace bash_dogs {
 
 		const String name;
 		State state;
+
+		bool selected = false;
+		float baseScale = 0.5f;
 
 		float timer = 0;
 

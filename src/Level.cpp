@@ -11,6 +11,8 @@
 using namespace bash_dogs;
 using namespace Dojo;
 
+float rythmDuration = 60.f / 80.f;
+
 Level::Level(BashDogsGame* game ) :
 	GameState( game )
 {
@@ -183,6 +185,8 @@ bool bash_dogs::Level::connect(const String& address) {
 
 		fileSystem->initialize();
 
+		rythmDuration = 60.f / 116.f;
+
 		//play music
 		if (Platform::getSingleton()->getUserConfiguration().getBool("music", true))
 			Platform::getSingleton()->getSoundManager()->playMusic(getSound("redline"), 3.f);
@@ -218,9 +222,9 @@ void Level::onStateLoop( float dt )
 	else
 		distortion = 2;
 
-	planePivot->position.x += dt * 0.3f;
-	if (planePivot->position.x > 3.f)
-		planePivot->position.x -= 3.f;
+	planePivot->position.z += dt * 0.3f;
+	if (planePivot->position.z > 3.f)
+		planePivot->position.z -= 3.f;
 }
 
 void Level::onStateEnd()

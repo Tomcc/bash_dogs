@@ -84,23 +84,35 @@ File& bash_dogs::File::addFile(File& file) {
 	return file;
 }
 
+void bash_dogs::File::select(bool selected_) {
+	selected = selected_;
+	baseScale = selected_ ? 0.8f : 0.5f;
+
+	if (!selected_)
+		icon->setRotation(Vector::ZERO);
+}
+
 void File::onAction(float dt) {
 	
 	icon->position = getWorldPosition();
 	label->position = icon->position + Vector(0,0.35f);
 
-	if (icon->scale.x < 0.5f)
+	if (selected)
+		icon->rotate(0.7f, Vector::UNIT_Y);
+
+	if (icon->scale.x < baseScale)
 		icon->scale += dt * 1.f;
 	else {
 
-		if (icon->scale.x > 0.501f)
+		if (icon->scale.x > baseScale) {
 			icon->scale -= dt * 1.f;
 
-		if (icon->scale.x < 0.5f)
-			icon->scale = 0.5f;
+			if (icon->scale.x < baseScale)
+				icon->scale = baseScale;
+		}
 
 		timer += dt;
-		if (timer > 60.f / 60.f) {
+		if (timer > rythmDuration) {
 			icon->scale += 0.1f;
 			timer = 0;
 		}
