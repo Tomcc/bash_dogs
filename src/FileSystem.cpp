@@ -9,7 +9,7 @@ using namespace bash_dogs;
 bash_dogs::FileSystem::FileSystem(Level & level, const Vector& pos) :
 Object(&level, pos) {
 
-	root = new File(*this, Vector::ZERO, "ROOT", File::LL_FILE);
+	root = new File(*this, Vector::ZERO, "ROOT", File::T_FILE, File::FS_OPEN );
 	addChild(root, (int)Layers::LL_GRAPH);
 }
 

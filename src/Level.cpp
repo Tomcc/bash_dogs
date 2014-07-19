@@ -132,6 +132,9 @@ bool bash_dogs::Level::connect(const String& address) {
 	if (server != nullptr) {
 		fileSystem = new FileSystem(*this, Vector::ZERO);
 		addChild(fileSystem);
+
+		//play music
+		Platform::getSingleton()->getSoundManager()->playMusic(getSound("redline"), 3.f);
 	}
 
 	return server != nullptr;
@@ -142,6 +145,7 @@ void Level::onEnd()
 	Platform::getSingleton()->getRender()->removeAllRenderables();
 	Platform::getSingleton()->getRender()->removeAllViewports();
 	Platform::getSingleton()->getInput()->removeListener(this);
+	Platform::getSingleton()->getSoundManager()->stopMusic();
 
 	for (auto d : Platform::getSingleton()->getInput()->getDeviceList() )
 		d->removeListener(this);
