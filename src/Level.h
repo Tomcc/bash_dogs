@@ -18,9 +18,11 @@ namespace bash_dogs {
     {
     public:
 
-        Level( BashDogsGame* game, Server& server );
+        Level( BashDogsGame* game );
 
 		virtual ~Level();
+
+		bool connect(const String& address);
 
 		virtual void onDeviceConnected(Dojo::InputDevice* j) override;
 		void onDeviceDisconnected(Dojo::InputDevice* j) override;
@@ -29,9 +31,13 @@ namespace bash_dogs {
 
 		void onButtonReleased(Dojo::InputDevice* j, int action) override;
 
+		Server* getServer() {
+			return server.get();
+		}
+
     protected:
 
-		Server& server;
+		Unique<Server> server;
 
 		Console* console;
 		float distortion = 2.f;
@@ -46,7 +52,6 @@ namespace bash_dogs {
         
         virtual void onStateEnd();
 
-		void _makeWorld();
     private:
     };
 }   

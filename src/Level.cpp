@@ -4,13 +4,13 @@
 
 #include "BashDogsGame.h"
 #include "Console.h"
+#include "RealServer.h"
 
 using namespace bash_dogs;
 using namespace Dojo;
 
-Level::Level(BashDogsGame* game, Server& server ) :
-	GameState( game ),
-	server(server)
+Level::Level(BashDogsGame* game ) :
+	GameState( game )
 {
 
 }
@@ -111,6 +111,15 @@ void Level::onBegin()
 	addChild(r, (int)Layers::LL_MAIN_WINDOW);
 }
 
+bool bash_dogs::Level::connect(const String& address) {
+
+	if (address == String("LOCALHOST")) {
+		server = make_unique<RealServer>();
+	}
+
+	return server != nullptr;
+}
+
 void Level::onEnd()
 {
 	Platform::getSingleton()->getRender()->removeAllRenderables();
@@ -145,8 +154,10 @@ void Level::onStateEnd()
 void bash_dogs::Level::onButtonPressed(Dojo::InputDevice* j, int action) {
 	auto finishedLine = console->onKeyPressed(action);
 
-	if (!finishedLine) {
-		server.runCommand(finishedLine->cmd, [](const String& reply) {
+	if (finishedLine) {
+		DEBUG_ASSERT(server, "Do not submit commands without a Server interface");
+
+		server->runCommand(finishedLine->cmd, [](const String& reply) {
 			
 		});
 	}

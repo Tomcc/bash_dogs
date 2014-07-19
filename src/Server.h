@@ -11,6 +11,8 @@ namespace bash_dogs {
 
 		virtual void runCommand(const String& command, const ReplyCallback& callback) = 0;
 
+		virtual bool isLocalHost() const = 0;
+
 	protected:
 	private:
 	};

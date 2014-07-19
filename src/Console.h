@@ -4,6 +4,8 @@
 
 namespace bash_dogs {
 
+	class Level;
+
 	class Console : 
 		public Object,
 		public StateInterface
@@ -39,7 +41,7 @@ namespace bash_dogs {
 			}
 		};
 
-		Console(Object& parent, const Vector& pos);
+		Console(Level& level, const Vector& pos);
 
 		virtual ~Console();
 
@@ -61,6 +63,9 @@ namespace bash_dogs {
 		Unique<Line> onKeyPressed(int key);
 
 	protected:
+
+		Level& level;
+
 		int lastLineID = 0;
 		TextArea* cursor;
 		float blink = 0;
@@ -83,6 +88,8 @@ namespace bash_dogs {
 		virtual void onStateBegin();
 
 		virtual void onStateLoop(float dt);
+
+		virtual void onStateEnd();
 	private:
 	};
 

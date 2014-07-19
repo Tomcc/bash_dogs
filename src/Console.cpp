@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "Console.h"
+#include "Level.h"
 
 using namespace Dojo;
 using namespace bash_dogs;
@@ -17,8 +18,9 @@ String bash_dogs::Console::Command::getParam(int key) {
 }
 
 
-bash_dogs::Console::Console(Object& parent, const Vector& pos) :
-Object(&parent, pos) {
+bash_dogs::Console::Console(Level& level, const Vector& pos) :
+Object(&level, pos),
+level(level) {
 
 	newLine();
 	newLine();
@@ -205,12 +207,66 @@ void bash_dogs::Console::onStateBegin() {
 		newLine();
 		write("3. WELCOME, '" + username + "'");
 		newLine();
-		write("   get ready to ATTACK `" + address + "'");
+		if (level.getServer()->isLocalHost())
+			write("   PREPARE TO DEFEND THE MAINFRAME");
+		else
+			write("   ATTACKING `" + address + "'");
+
 		newLine(username);
 	}
 }
 
 void bash_dogs::Console::onStateLoop(float dt) {
+	
+}
+
+Unique<bash_dogs::Console::Line> bash_dogs::Console::onKeyPressed(int key) {
+
+	if (isCurrentState(CS_LOGIN)) {
+		if (_edit(username, key, 9))
+			setState(CS_CHOOSE);
+	}
+	else if (isCurrentState(CS_CHOOSE)) {
+		if (_edit(address, key, 16)) {
+
+			if (level.connect(address))
+				setState(CS_NORMAL);
+			else {
+				address = String::EMPTY;
+
+				newLine();
+				write("ADDRESS NOT RECOGNIZED");
+				newLine(username);
+				write("address: ");
+			}
+		}
+	}
+	else if (isCurrentState(CS_NORMAL)) {
+		if (key == KC_RETURN)
+			return make_unique<Line>(newLine(username));
+		else if (!currentCommand) {
+
+			if (key == KC_TAB) {
+				while (!currentCommand)
+					currentCommand = oneOf(command);
+			}
+			else
+				currentCommand = command[key];
+
+			if (currentCommand)
+				write(currentCommand.command + " ");
+		}
+		else {
+			String param = currentCommand.getParam(key);
+			if (!param.empty())
+				write("--" + param + " ");
+		}
+	}
+
+	return nullptr;
+}
+
+void bash_dogs::Console::onStateEnd() {
 	
 }
 
@@ -239,39 +295,4 @@ void bash_dogs::Console::onAction(float dt) {
 
 	cursor->position.x = getLastLine().position.x + getLastLine().getSize().x * getLastLine().scale.x;
 	cursor->position.y = getLastLine().position.y;
-}
-
-Unique<bash_dogs::Console::Line> bash_dogs::Console::onKeyPressed(int key) {
-
-	if (isCurrentState(CS_LOGIN)) {
-		if (_edit(username, key, 9))
-			setState(CS_CHOOSE);
-	}
-	else if (isCurrentState(CS_CHOOSE)) {
-		if (_edit(address, key, 16))
-			setState(CS_NORMAL);
-	}
-	else if (isCurrentState(CS_NORMAL)) {
-		if (key == KC_RETURN)
-			return make_unique<Line>(newLine(username));
-		else if (!currentCommand) {
-
-			if (key == KC_TAB) {
-				while (!currentCommand)
-					currentCommand = oneOf(command);
-			}
-			else
-				currentCommand = command[key];
-
-			if (currentCommand)
-				write(currentCommand.command + " ");
-		}
-		else {
-			String param = currentCommand.getParam(key);
-			if (!param.empty())
-				write("--" + param + " ");
-		}
-	}
-
-	return nullptr;
 }

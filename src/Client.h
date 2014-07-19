@@ -9,6 +9,10 @@ namespace bash_dogs {
 	{
 	public:
 
+		virtual bool isLocalHost() const override {
+			return false;
+		}
+
 	protected:
 	private:
 	};

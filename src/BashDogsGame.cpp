@@ -10,8 +10,6 @@ using namespace Dojo;
 
 bash_dogs::BashDogsGame::BashDogsGame() :
 Game("BASH_DOGS", 0,  0, Dojo::DO_LANDSCAPE_RIGHT, 1.f / 30.f) {
-
-	server = make_unique<RealServer>();
 }
 
 void BashDogsGame::onBegin()
@@ -25,5 +23,5 @@ void BashDogsGame::onBegin()
 }
 
 void BashDogsGame::reset() {
-	setState(new Level(this, *server));
+	setState(new Level(this));
 }
