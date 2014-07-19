@@ -4,10 +4,22 @@
 
 #include "Server.h"
 
+namespace Poco {
+	namespace Net {
+		class ServerSocket;
+		class StreamSocket;
+	}
+}
+
 namespace bash_dogs {
 	class RealServer : public Server
 	{
 	public:
+
+		RealServer();
+
+		~RealServer();
+
 		virtual void runCommand(const String& command, const ReplyCallback& callback) override;
 
 		virtual bool isLocalHost() const override {
@@ -15,9 +27,12 @@ namespace bash_dogs {
 		}
 
 	protected:
-	private:
+		Unique<Poco::Net::ServerSocket> serverSocket;
+		Unique<Poco::Net::StreamSocket> clientSocket;
 
+		std::mutex clientSocketMutex;
 
+		void _dispatchCommand(const String& command);
 
 	};
 }

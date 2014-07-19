@@ -27,6 +27,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\BashDogsGame.cpp" />
+    <ClCompile Include="..\src\Client.cpp" />
     <ClCompile Include="..\src\Console.cpp" />
     <ClCompile Include="..\src\Level.cpp" />
     <ClCompile Include="..\src\main.cpp" />

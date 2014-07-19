@@ -5,6 +5,7 @@
 #include "BashDogsGame.h"
 #include "Console.h"
 #include "RealServer.h"
+#include "Client.h"
 
 using namespace bash_dogs;
 using namespace Dojo;
@@ -116,6 +117,15 @@ bool bash_dogs::Level::connect(const String& address) {
 	if (address == String("LOCALHOST")) {
 		server = make_unique<RealServer>();
 	}
+	else {
+
+		//try to connect
+		auto client = new Client(address);
+		if (client->isConnected())
+			server.reset(client);
+		else
+			delete client;
+	}
 
 	return server != nullptr;
 }
@@ -157,9 +167,14 @@ void bash_dogs::Level::onButtonPressed(Dojo::InputDevice* j, int action) {
 	if (finishedLine) {
 		DEBUG_ASSERT(server, "Do not submit commands without a Server interface");
 
-		server->runCommand(finishedLine->cmd, [](const String& reply) {
-			
-		});
+		if (finishedLine->cmd == String("quit")) {
+			getGame()->stop();
+		}
+		else {
+			server->runCommand(finishedLine->cmd, [](const String& reply) {
+
+			});
+		}
 	}
 }
 

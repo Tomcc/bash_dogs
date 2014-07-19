@@ -7,8 +7,11 @@
 #include <memory>
 #include <unordered_set>
 #include <unordered_map>
+#include <mutex>
 
-#include <Poco/Net/Socket.h>
+#include <Poco/Net/StreamSocket.h>
+
+#define PORT 12300
 
 using namespace Dojo;
 
@@ -24,6 +27,8 @@ using Shared = std::shared_ptr < T > ;
 template<typename T>
 using Weak = std::weak_ptr < T > ;
 
+typedef std::lock_guard<std::mutex> LockGuard;
+
 //C++14 where not available
 #ifndef WIN32
 template<typename T, typename ...Args>
@@ -34,6 +39,11 @@ std::unique_ptr<T> make_unique(Args&& ...args) {
 using std::make_unique;
 #endif
 using std::make_shared;
+
+template<typename T, typename M>
+std::unique_ptr<T>&& unique_cast(std::unique_ptr<M>& in) {
+	return std::unique_ptr<T>((T*)in.release());
+}
 
 namespace bash_dogs {
 

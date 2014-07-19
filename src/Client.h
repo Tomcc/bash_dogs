@@ -9,11 +9,20 @@ namespace bash_dogs {
 	{
 	public:
 
+		Client(const String& address);
+
 		virtual bool isLocalHost() const override {
 			return false;
 		}
 
+		virtual void runCommand(const String& command, const ReplyCallback& callback) override;
+
+		bool isConnected() const {
+			return socket != nullptr;
+		}
+
 	protected:
+		Unique<Poco::Net::StreamSocket> socket;
 	private:
 	};
 }

@@ -17,35 +17,10 @@ namespace bash_dogs
 
 		void reset();
 
+
 	protected:
 
 		virtual void onBegin();
-
-		virtual void onLoop( float dt )
-		{
-
-		}
-		virtual void onEnd()
-		{
-
-		}
-
-		//----- immediate substate events
-		virtual void onStateBegin()
-		{
-
-		}
-
-		virtual void onStateLoop( float dt )
-		{
-
-		}
-
-		virtual void onStateEnd()
-		{
-
-		}
-	private:
 	};
 }
 

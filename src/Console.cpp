@@ -57,7 +57,7 @@ level(level) {
 	command[KC_N] = Command("network-map", { { KC_F, "foo" }, { KC_B, "bar" } });
 	command[KC_O] = Command("open", { { KC_F, "foo" }, { KC_B, "bar" } });
 	command[KC_P] = Command("perl", { { KC_F, "foo" }, { KC_B, "bar" } });
-	command[KC_Q] = Command("quantize", { { KC_F, "foo" }, { KC_B, "bar" } });
+	command[KC_Q] = Command("quit", {});
 	command[KC_R] = Command("rtfm", { { KC_F, "foo" }, { KC_B, "bar" } });
 	command[KC_S] = Command("sort", { { KC_F, "foo" }, { KC_B, "bar" } });
 	command[KC_T] = Command("tar-lz", { { KC_F, "foo" }, { KC_B, "bar" } });
@@ -116,29 +116,41 @@ bash_dogs::Console::~Console() {
 
 void bash_dogs::Console::write(const String& s) {
 	getLastLine().addText(s);
+
+	if (isCurrentState(CS_NORMAL)) {
+		commandText += s;
+	}
 }
 
 void bash_dogs::Console::backspace() {
 	auto old = getLastLine().getContent();
 	getLastLine().clearText();
 	getLastLine().addText(old.substr(0, old.size() - 1));
+
+	if (isCurrentState(CS_NORMAL)) {
+		commandText.resize(commandText.size() - 1);
+	}
 }
 
 bash_dogs::Console::Line bash_dogs::Console::newLine(const String& author) {
 	const Vector interline(0, -0.4);
 
-	String res = lines.empty() ? String::EMPTY : getLastLine().getContent();
-	if (lines.size() > 20) {
+	String res = commandText;
+	if (lines.size() > 0) {
 
-		if (getLastLine().position.y < -9) {
- 			lines.front()->dispose = true;
- 			lines.erase(lines.begin());
+		if (lines.size() > 20) {
 
-			for (auto l : lines)
-				l->position -= interline;
+			if (getLastLine().position.y < -9) {
+				lines.front()->dispose = true;
+				lines.erase(lines.begin());
+
+				for (auto l : lines)
+					l->position -= interline;
+			}
 		}
 	}
 
+	commandText = String::EMPTY;
 	currentCommand = Command();
 
 	//create a new one
@@ -153,22 +165,6 @@ bash_dogs::Console::Line bash_dogs::Console::newLine(const String& author) {
 	++lastLineID;
 
 	return { res, lastLineID - 1 };
-}
-
-const Dojo::String& bash_dogs::Console::_getCommandForKey(int key) const {
-
-	if (command.empty()) {
-		switch (key)
-		{
-		
-		default:
-			return String::EMPTY;
-		}
-	}
-	else {
-		return String::EMPTY;
-	}
-
 }
 
 bool bash_dogs::Console::_edit(String& field, int key, int maxChars) {
@@ -254,12 +250,12 @@ Unique<bash_dogs::Console::Line> bash_dogs::Console::onKeyPressed(int key) {
 				currentCommand = command[key];
 
 			if (currentCommand)
-				write(currentCommand.command + " ");
+				write(currentCommand.command);
 		}
 		else {
 			String param = currentCommand.getParam(key);
 			if (!param.empty())
-				write("--" + param + " ");
+				write(" --" + param);
 		}
 	}
 

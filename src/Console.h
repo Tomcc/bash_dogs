@@ -74,6 +74,7 @@ namespace bash_dogs {
 		String username, address;
 
 		Command currentCommand;
+		String commandText;
 
 		std::vector<TextArea*> lines;
 
@@ -81,8 +82,6 @@ namespace bash_dogs {
 
 		std::vector<char> ASCII;
 		
-		const String& _getCommandForKey(int key) const;
-
 		bool _edit(String& field, int key, int maxChars);
 
 		virtual void onStateBegin();
