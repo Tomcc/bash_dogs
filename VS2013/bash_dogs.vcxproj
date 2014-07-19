@@ -20,6 +20,8 @@
     <ClInclude Include="..\src\Client.h" />
     <ClInclude Include="..\src\common_header.h" />
     <ClInclude Include="..\src\Console.h" />
+    <ClInclude Include="..\src\File.h" />
+    <ClInclude Include="..\src\FileSystem.h" />
     <ClInclude Include="..\src\Level.h" />
     <ClInclude Include="..\src\RealServer.h" />
     <ClInclude Include="..\src\Server.h" />
@@ -29,6 +31,8 @@
     <ClCompile Include="..\src\BashDogsGame.cpp" />
     <ClCompile Include="..\src\Client.cpp" />
     <ClCompile Include="..\src\Console.cpp" />
+    <ClCompile Include="..\src\File.cpp" />
+    <ClCompile Include="..\src\FileSystem.cpp" />
     <ClCompile Include="..\src\Level.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\RealServer.cpp" />

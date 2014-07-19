@@ -6,6 +6,7 @@
 #include "Console.h"
 #include "RealServer.h"
 #include "Client.h"
+#include "FileSystem.h"
 
 using namespace bash_dogs;
 using namespace Dojo;
@@ -27,6 +28,7 @@ void Level::onBegin()
 
 	auto renderer = Platform::getSingleton()->getRender();
 	renderer->getLayer((int)Layers::LL_WIREFRAME)->wireframe = true;
+	renderer->getLayer((int)Layers::LL_GRAPH)->wireframe = true;
 
 	loadResources();
 
@@ -127,6 +129,11 @@ bool bash_dogs::Level::connect(const String& address) {
 			delete client;
 	}
 
+	if (server != nullptr) {
+		fileSystem = new FileSystem(*this, Vector::ZERO);
+		addChild(fileSystem);
+	}
+
 	return server != nullptr;
 }
 
@@ -171,7 +178,12 @@ void bash_dogs::Level::onButtonPressed(Dojo::InputDevice* j, int action) {
 			getGame()->stop();
 		}
 		else {
-			server->runCommand(finishedLine->cmd, [](const String& reply) {
+			server->runCommand(finishedLine->cmd, [](const String& replyText) {
+				StringReader reader(replyText);
+				Table reply;
+
+				reply.deserialize(reader);
+
 
 			});
 		}

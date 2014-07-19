@@ -9,6 +9,7 @@ namespace bash_dogs {
 
 	class BashDogsGame;
 	class Console;
+	class FileSystem;
 
     class Level :
 	public Dojo::GameState,
@@ -38,6 +39,8 @@ namespace bash_dogs {
     protected:
 
 		Unique<Server> server;
+
+		FileSystem* fileSystem;
 
 		Console* console;
 		float distortion = 2.f;

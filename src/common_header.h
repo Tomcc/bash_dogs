@@ -56,7 +56,9 @@ namespace bash_dogs {
 	{
 		LL_BACKGROUND,
 
-		LL_TERRAIN,
+		LL_GRAPH, 
+		LL_GRAPH_TEXT,
+
 
 		LL_CONSOLE,
 
