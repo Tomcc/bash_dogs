@@ -17,23 +17,24 @@ String bash_dogs::Console::Command::getParam(int key) {
 }
 
 
-bash_dogs::Console::Console(Object& parent, const Vector& pos, InputDevice& keyboard) :
-Object(&parent, pos),
-keyboard(keyboard) {
+bash_dogs::Console::Console(Object& parent, const Vector& pos) :
+Object(&parent, pos) {
 
 	newLine();
+	newLine();
 
-	write("Welcome To HAXEOR TERMINAL 2055");
+	write("Welcome To HAXEOR TERMINAL (c)2055");
 	newLine();
 
 	write("TYPE SHIT TO HACKER");
 	newLine();
 
+	write("-------------------");
+	newLine();
+
 	cursor = new TextArea(this, "debugFont", Vector::ZERO);
 	cursor->addText("_");
 	addChild(cursor, (int)Layers::LL_CONSOLE);
-
-	keyboard.addListener(this);
 
 	command.resize(256);
 
@@ -64,18 +65,68 @@ keyboard(keyboard) {
 	command[KC_X] = Command("x-conf", { { KC_F, "foo" }, { KC_B, "bar" } });
 	command[KC_Y] = Command("yzf", { { KC_F, "foo" }, { KC_B, "bar" } });
 	command[KC_Z] = Command("zip", { { KC_F, "foo" }, { KC_B, "bar" } });
+
+	ASCII.resize(256);
+	ASCII[KC_A] = 'A';
+	ASCII[KC_B] = 'B';
+	ASCII[KC_C] = 'C';
+	ASCII[KC_D] = 'D';
+	ASCII[KC_E] = 'E';
+	ASCII[KC_F] = 'F';
+	ASCII[KC_G] = 'G';
+	ASCII[KC_H] = 'H';
+	ASCII[KC_I] = 'I';
+	ASCII[KC_J] = 'J';
+	ASCII[KC_K] = 'K';
+	ASCII[KC_L] = 'L';
+	ASCII[KC_M] = 'M';
+	ASCII[KC_N] = 'N';
+	ASCII[KC_O] = 'O';
+	ASCII[KC_P] = 'P';
+	ASCII[KC_Q] = 'Q';
+	ASCII[KC_R] = 'R';
+	ASCII[KC_S] = 'S';
+	ASCII[KC_T] = 'T';
+	ASCII[KC_U] = 'U';
+	ASCII[KC_V] = 'V';
+	ASCII[KC_W] = 'W';
+	ASCII[KC_X] = 'X';
+	ASCII[KC_Y] = 'Y';
+	ASCII[KC_Z] = 'Z';
+	ASCII[KC_0] = '0';
+	ASCII[KC_1] = '1';
+	ASCII[KC_2] = '2';
+	ASCII[KC_3] = '3';
+	ASCII[KC_4] = '4';
+	ASCII[KC_5] = '5';
+	ASCII[KC_6] = '6';
+	ASCII[KC_7] = '7';
+	ASCII[KC_8] = '8';
+	ASCII[KC_9] = '9';
+	ASCII[KC_PERIOD] = '.';
+
+	setState(CS_LOGIN);
+}
+
+bash_dogs::Console::~Console() {
+
 }
 
 void bash_dogs::Console::write(const String& s) {
 	getLastLine().addText(s);
 }
 
-String bash_dogs::Console::newLine() {
+void bash_dogs::Console::backspace() {
+	auto old = getLastLine().getContent();
+	getLastLine().clearText();
+	getLastLine().addText(old.substr(0, old.size() - 1));
+}
+
+bash_dogs::Console::Line bash_dogs::Console::newLine(const String& author) {
 	const Vector interline(0, -0.4);
 
-	String res;
+	String res = lines.empty() ? String::EMPTY : getLastLine().getContent();
 	if (lines.size() > 20) {
-		res = getLastLine().getContent();
 
 		if (getLastLine().position.y < -9) {
  			lines.front()->dispose = true;
@@ -91,25 +142,15 @@ String bash_dogs::Console::newLine() {
 	//create a new one
 	TextArea* line = new TextArea(this, "debugFont", interline * lines.size(), false, getParent()->getSize());
 	addChild(line, (int)Layers::LL_CONSOLE);
-	line->addText("> ");
+	line->addText( author + "> ");
 	line->color = Color::GREEN;
+	line->setVisibleCharacters(username.size() + 1);
+	line->setVisible(false);
 
 	lines.push_back(line);
+	++lastLineID;
 
-	return res;
-}
-
-void bash_dogs::Console::onAction(float dt) {
-	Object::onAction(dt);
-
-	blink += dt;
-	if (blink > 0.5f) {
-		cursor->setVisible(!cursor->isVisible());
-		blink = 0;
-	}
-
-	cursor->position.x = getLastLine().position.x + getLastLine().getSize().x * getLastLine().scale.x;
-	cursor->position.y = getLastLine().position.y;
+	return { res, lastLineID - 1 };
 }
 
 const Dojo::String& bash_dogs::Console::_getCommandForKey(int key) const {
@@ -128,29 +169,109 @@ const Dojo::String& bash_dogs::Console::_getCommandForKey(int key) const {
 
 }
 
-void bash_dogs::Console::onButtonPressed(Dojo::InputDevice* j, int action) {
+bool bash_dogs::Console::_edit(String& field, int key, int maxChars) {
+	auto c = ASCII[key];
 
-	if (action == KC_RETURN)
-		newLine();
-	else if( !currentCommand ) {
-
-		if (action == KC_TAB) {
-			while (!currentCommand)
-				currentCommand = oneOf(command);
+	if (key == KC_RETURN)
+		return field.size() > 0;
+	else if (key == KC_BACK) {
+		if (field.size() > 0) {
+			field.resize(field.size() - 1);
+			backspace();
 		}
-		else
-			currentCommand = command[action];
-		
-		if (currentCommand)
-			write( currentCommand.command + " " );
 	}
-	else {
-		String param = currentCommand.getParam(action);
-		if (!param.empty())
-			write("--" + param + " ");
+	else if (c && field.size() < maxChars) {
+		field += c;
+		write(c);
+	}
+	return false;
+}
+
+void bash_dogs::Console::onStateBegin() {
+
+	if (isCurrentState(CS_LOGIN)) {
+		write("1. We would like you to LOGIN:");
+		newLine();
+		write("username: ");
+	}
+	if (isCurrentState(CS_CHOOSE)) {
+		
+		newLine();
+		write("2. Please select an ATTACK or DEFENSE target");
+		newLine(username);
+		write("address: ");
+	}
+	else if (isCurrentState(CS_NORMAL)) {
+		newLine();
+		write("3. WELCOME, '" + username + "'");
+		newLine();
+		write("   get ready to ATTACK `" + address + "'");
+		newLine(username);
 	}
 }
 
-bash_dogs::Console::~Console() {
-	keyboard.removeListener(this);
+void bash_dogs::Console::onStateLoop(float dt) {
+	
+}
+
+void bash_dogs::Console::onAction(float dt) {
+	Object::onAction(dt);
+
+	loop(dt);
+
+	blink += dt;
+	if (blink > 0.5f) {
+		cursor->setVisible(!cursor->isVisible());
+		blink = 0;
+	}
+
+	characterRefresh += dt;
+	if (characterRefresh > 0.015f) {
+		for (auto& l : lines) {
+			l->setVisibleCharacters(l->getVisibleCharacters() + 1);
+		}
+		characterRefresh = 0;
+	}
+
+	//make sure that invisible lines are invisible (duh)
+	for (auto& l : lines)
+		l->setVisible(l->canBeRendered());
+
+	cursor->position.x = getLastLine().position.x + getLastLine().getSize().x * getLastLine().scale.x;
+	cursor->position.y = getLastLine().position.y;
+}
+
+Unique<bash_dogs::Console::Line> bash_dogs::Console::onKeyPressed(int key) {
+
+	if (isCurrentState(CS_LOGIN)) {
+		if (_edit(username, key, 9))
+			setState(CS_CHOOSE);
+	}
+	else if (isCurrentState(CS_CHOOSE)) {
+		if (_edit(address, key, 16))
+			setState(CS_NORMAL);
+	}
+	else if (isCurrentState(CS_NORMAL)) {
+		if (key == KC_RETURN)
+			return make_unique<Line>(newLine(username));
+		else if (!currentCommand) {
+
+			if (key == KC_TAB) {
+				while (!currentCommand)
+					currentCommand = oneOf(command);
+			}
+			else
+				currentCommand = command[key];
+
+			if (currentCommand)
+				write(currentCommand.command + " ");
+		}
+		else {
+			String param = currentCommand.getParam(key);
+			if (!param.empty())
+				write("--" + param + " ");
+		}
+	}
+
+	return nullptr;
 }

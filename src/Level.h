@@ -3,6 +3,7 @@
 #define Level_h__
         
 #include "common_header.h"
+#include "Server.h"
 
 namespace bash_dogs {
 
@@ -17,18 +18,23 @@ namespace bash_dogs {
     {
     public:
 
-        Level( BashDogsGame* game );
+        Level( BashDogsGame* game, Server& server );
 
 		virtual ~Level();
 
 		virtual void onDeviceConnected(Dojo::InputDevice* j) override;
 		void onDeviceDisconnected(Dojo::InputDevice* j) override;
 
+		virtual void onButtonPressed(Dojo::InputDevice* j, int action) override;
+
 		void onButtonReleased(Dojo::InputDevice* j, int action) override;
 
     protected:
 
+		Server& server;
+
 		Console* console;
+		float distortion = 2.f;
 		
         virtual void onBegin();
         virtual void onEnd();

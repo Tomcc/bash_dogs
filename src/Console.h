@@ -6,9 +6,15 @@ namespace bash_dogs {
 
 	class Console : 
 		public Object,
-		public InputDevice::Listener
+		public StateInterface
 	{
 	public:
+
+		enum State {
+			CS_LOGIN,
+			CS_CHOOSE,
+			CS_NORMAL
+		};
 
 		template < typename T >
 		static const T& oneOf(const std::vector<T>& strings) {
@@ -33,13 +39,18 @@ namespace bash_dogs {
 			}
 		};
 
-		Console(Object& parent, const Vector& pos, InputDevice& keyboard);
+		Console(Object& parent, const Vector& pos);
 
 		virtual ~Console();
 
 		void write(const String& s);
+		void backspace();
 
-		String newLine();
+		typedef struct Line {
+			String cmd; int id;
+		};
+
+		Line newLine(const String& author = String::EMPTY);
 
 		TextArea& getLastLine() {
 			return *lines.back();
@@ -47,22 +58,31 @@ namespace bash_dogs {
 
 		virtual void onAction(float dt) override;
 
-		virtual void onButtonPressed(Dojo::InputDevice* j, int action) override;
+		Unique<Line> onKeyPressed(int key);
 
 	protected:
-		InputDevice& keyboard;
-
+		int lastLineID = 0;
 		TextArea* cursor;
 		float blink = 0;
+		float characterRefresh = 0;
+
+		String username, address;
 
 		Command currentCommand;
 
 		std::vector<TextArea*> lines;
 
 		std::vector<Command> command;
+
+		std::vector<char> ASCII;
 		
 		const String& _getCommandForKey(int key) const;
 
+		bool _edit(String& field, int key, int maxChars);
+
+		virtual void onStateBegin();
+
+		virtual void onStateLoop(float dt);
 	private:
 	};
 

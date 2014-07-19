@@ -8,8 +8,9 @@
 using namespace bash_dogs;
 using namespace Dojo;
 
-Level::Level(BashDogsGame* game) :
-	GameState( game )
+Level::Level(BashDogsGame* game, Server& server ) :
+	GameState( game ),
+	server(server)
 {
 
 }
@@ -43,12 +44,11 @@ void Level::onBegin()
 			camera = new Viewport(this,
 				Vector(0, 0, 1),
 				worldSize,
-				Color::BLUE,
+				Color::BLACK,
 				70, 0.01, 1000);
 
 			camera->setTargetSize(targetSize);
 			camera->setVisibleLayers({(int)Layers::LL_MAIN_WINDOW });
-
 
 			addChild(camera);
 			setViewport(camera);
@@ -58,7 +58,7 @@ void Level::onBegin()
 			auto RTCamera = new Viewport(this,
 				Vector(0, 0, 1),
 				worldSize,
-				Color::BLACK,
+				0xff141414,
 				70, 0.01, 1000);
 
 			RTCamera->setTargetSize(targetSize);
@@ -93,14 +93,20 @@ void Level::onBegin()
 		-camera->getHalfSize().x + 1,
 		camera->getHalfSize().y - 0.5f);
 
-	console = new bash_dogs::Console(*this, topLeft, *devices[0]);
+	console = new bash_dogs::Console(*this, topLeft);
 	addChild(console);
 
 	auto screenMesh = getMesh("schermo_tommo");
-	auto r = new Renderable(this, Vector(0,0,-100), screenMesh);
-	r->setRotation(Vector(0,-90.f,0));
+	auto r = new Renderable(this, Vector::ZERO, screenMesh);
 	r->scale = camera->getSize().y / screenMesh->getDimensions().y;
-	r->setTexture(rt);
+	r->setTexture(rt, 0);
+	r->setTexture(getTexture("hacker_screen"), 1);
+	r->setShader(getShader("consoleScreen"));
+
+	r->getShader()->setUniformCallback("DISTORTION", [this](Renderable*) {
+		return &distortion;
+	});
+
 	r->color = Color::WHITE;
 	addChild(r, (int)Layers::LL_MAIN_WINDOW);
 }
@@ -123,12 +129,27 @@ void Level::onStateBegin()
 
 void Level::onStateLoop( float dt )
 {
-
+	if (Math::oneEvery(200))
+		distortion = 20;
+	else if (Math::oneEvery(100))
+		distortion = 10;
+	else
+		distortion = 2;
 }
 
 void Level::onStateEnd()
 {
 
+}
+
+void bash_dogs::Level::onButtonPressed(Dojo::InputDevice* j, int action) {
+	auto finishedLine = console->onKeyPressed(action);
+
+	if (!finishedLine) {
+		server.runCommand(finishedLine->cmd, [](const String& reply) {
+			
+		});
+	}
 }
 
 void Level::onButtonReleased(Dojo::InputDevice* j, int action) {

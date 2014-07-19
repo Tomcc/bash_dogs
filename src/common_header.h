@@ -8,6 +8,8 @@
 #include <unordered_set>
 #include <unordered_map>
 
+#include <Poco/Net/Socket.h>
+
 using namespace Dojo;
 
 #define DLLX __declspec(dllimport)

@@ -47,6 +47,8 @@ namespace bash_dogs
 		}
 
 	protected:
+
+		Unique<Server> server;
 	private:
 	};
 }

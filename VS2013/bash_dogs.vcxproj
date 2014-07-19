@@ -17,9 +17,12 @@
   <ItemGroup>
     <ClInclude Include="..\include\stdafx.h" />
     <ClInclude Include="..\src\BashDogsGame.h" />
+    <ClInclude Include="..\src\Client.h" />
     <ClInclude Include="..\src\common_header.h" />
     <ClInclude Include="..\src\Console.h" />
     <ClInclude Include="..\src\Level.h" />
+    <ClInclude Include="..\src\RealServer.h" />
+    <ClInclude Include="..\src\Server.h" />
     <ClInclude Include="..\src\stdafx.h" />
   </ItemGroup>
   <ItemGroup>
@@ -27,6 +30,8 @@
     <ClCompile Include="..\src\Console.cpp" />
     <ClCompile Include="..\src\Level.cpp" />
     <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="..\src\RealServer.cpp" />
+    <ClCompile Include="..\src\Server.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -88,7 +93,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>../../dojo/dependencies/include;../../dojo/include;../src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../dojo/dependencies/include;../../dojo/include;../src;../dependencies/include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
@@ -96,15 +101,15 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../../dojo\lib;../../dojo/dependencies/Win32/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dojo_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../dependencies/lib;../../dojo\lib;../../dojo/dependencies/Win32/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dojo_d.lib;PocoNetd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Full</Optimization>
-      <AdditionalIncludeDirectories>../../dojo/dependencies/include;../../dojo/include;../src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../dojo/dependencies/include;../../dojo/include;../src;../dependencies/include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
@@ -122,7 +127,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../../dojo\lib;../../dojo/dependencies/Win32/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../dependencies/lib;../../dojo\lib;../../dojo/dependencies/Win32/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>dojo.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
@@ -131,7 +136,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Full</Optimization>
-      <AdditionalIncludeDirectories>../../dojo/dependencies/include;../../dojo/include;../src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../dojo/dependencies/include;../../dojo/include;../src;../dependencies/include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;PUBLISH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
@@ -149,7 +154,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../../dojo\lib;../../dojo/dependencies/Win32/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../dependencies/lib;../../dojo\lib;../../dojo/dependencies/Win32/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>dojo.lib;Box2D.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
