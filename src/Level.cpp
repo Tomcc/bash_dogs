@@ -28,7 +28,7 @@ void Level::onBegin()
 
 	auto renderer = Platform::getSingleton()->getRender();
 	renderer->getLayer((int)Layers::LL_WIREFRAME)->wireframe = true;
-	renderer->getLayer((int)Layers::LL_GRAPH)->wireframe = true;
+	renderer->getLayer((int)Layers::LL_GRAPH_WIREFRAME)->wireframe = true;
 	
 	auto layer3D = renderer->getLayer((int)Layers::LL_BACKGROUND);
 	layer3D->depthCheck = false;
@@ -118,7 +118,6 @@ void Level::onBegin()
 	r->color = Color::WHITE;
 	addChild(r, (int)Layers::LL_MAIN_WINDOW);
 
-
 	//make lines
 	{
 		Mesh* gridLines = new Mesh();
@@ -150,14 +149,16 @@ void Level::onBegin()
 
 		gridLines->end();
 
+		planePivot = new Object(this, Vector::ZERO);
+		addChild(planePivot);
+
 		r = new Renderable(this, Vector(0,-7.f, 0), gridLines);
 		r->scale = 3;
-		addChild(r, (int)Layers::LL_BACKGROUND);
-
+		planePivot->addChild(r, (int)Layers::LL_BACKGROUND);
 
 		r = new Renderable(this, Vector(0, 7.f, 0), gridLines);
 		r->scale = 3;
-		addChild(r, (int)Layers::LL_BACKGROUND);
+		planePivot->addChild(r, (int)Layers::LL_BACKGROUND);
 	}
 }
 
@@ -177,11 +178,14 @@ bool bash_dogs::Level::connect(const String& address) {
 	}
 
 	if (server != nullptr) {
-		fileSystem = new FileSystem(*this, Vector::ZERO);
+		fileSystem = new FileSystem(*this, Vector::NEGATIVE_UNIT_Z * 500.f);
 		addChild(fileSystem);
 
+		fileSystem->initialize();
+
 		//play music
-		Platform::getSingleton()->getSoundManager()->playMusic(getSound("redline"), 3.f);
+		if (Platform::getSingleton()->getUserConfiguration().getBool("music", true))
+			Platform::getSingleton()->getSoundManager()->playMusic(getSound("redline"), 3.f);
 	}
 
 	return server != nullptr;
@@ -213,6 +217,10 @@ void Level::onStateLoop( float dt )
 		distortion = 10;
 	else
 		distortion = 2;
+
+	planePivot->position.x += dt * 0.3f;
+	if (planePivot->position.x > 3.f)
+		planePivot->position.x -= 3.f;
 }
 
 void Level::onStateEnd()

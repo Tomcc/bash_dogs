@@ -99,7 +99,7 @@ namespace bash_dogs {
 
 		std::vector<char> ASCII;
 		
-		bool _edit(String& field, int key, int maxChars);
+		bool _edit(String& field, int key, int maxChars, const String& defaultName);
 
 		virtual void onStateBegin();
 

@@ -46,6 +46,8 @@ namespace bash_dogs {
 
 		FileSystem* fileSystem;
 
+		Object* planePivot;
+
 		Console* console;
 		float distortion = 2.f;
 		

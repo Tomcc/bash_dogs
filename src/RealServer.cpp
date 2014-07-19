@@ -5,6 +5,7 @@
 #include "Level.h"
 
 #include <Poco/Net/ServerSocket.h>
+#include "FileSystem.h"
 
 using namespace bash_dogs;
 using namespace Poco;
@@ -21,6 +22,13 @@ level(level) {
 		LockGuard lock();
 		clientSocket = make_unique<StreamSocket>(ss);
 	});
+
+
+	masterFileSystem = make_unique<FileSystem>(level, Vector::ZERO, false);
+
+	//make the filesystem structure
+
+
 }
 
 RealServer::~RealServer() {

@@ -56,8 +56,8 @@ namespace bash_dogs {
 	{
 		LL_BACKGROUND,
 
-		LL_GRAPH, 
-		LL_GRAPH_TEXT,
+		LL_GRAPH_WIREFRAME, 
+		LL_GRAPH,
 
 
 		LL_CONSOLE,

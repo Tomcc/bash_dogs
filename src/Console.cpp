@@ -227,7 +227,10 @@ level(level) {
 	cursor->addText("_");
 	addChild(cursor, (int)Layers::LL_CONSOLE);
 
-	setState(CS_INTRO1);
+	if (Platform::getSingleton()->getUserConfiguration().getBool("skip_intro"))
+		setState(CS_LOGIN);
+	else
+		setState(CS_INTRO1);
 }
 
 bash_dogs::Console::~Console() {
@@ -282,6 +285,7 @@ bash_dogs::Console::Line bash_dogs::Console::newLine(const String& author) {
 	line->color = Color::GREEN;
 	line->setVisibleCharacters(username.size() + 1);
 	line->setVisible(false);
+	line->setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_DST_COLOR);
 
 	lines.push_back(line);
 	++lastLineID;
@@ -289,8 +293,13 @@ bash_dogs::Console::Line bash_dogs::Console::newLine(const String& author) {
 	return { res, lastLineID - 1 };
 }
 
-bool bash_dogs::Console::_edit(String& field, int key, int maxChars) {
+bool bash_dogs::Console::_edit(String& field, int key, int maxChars, const String& defaultName) {
 	auto c = ASCII[key];
+
+	if (Platform::getSingleton()->getUserConfiguration().existsAs(defaultName, Table::FT_STRING)) {
+		field = Platform::getSingleton()->getUserConfiguration().getString(defaultName);
+		return true;
+	}
 
 	if (key == KC_RETURN)
 		return field.size() > 0;
@@ -310,6 +319,8 @@ bool bash_dogs::Console::_edit(String& field, int key, int maxChars) {
 void bash_dogs::Console::onStateBegin() {
 
 	if (isCurrentState(CS_INTRO1)) {
+		Platform::getSingleton()->getSoundManager()->playSound(getGameState()->getSound("dialup"), 0.1f);
+
 		newLine();
 		write("#!/bin/bash_dogs");
 	}
@@ -338,6 +349,7 @@ void bash_dogs::Console::onStateBegin() {
 	}
 	else if (isCurrentState(CS_LOGIN)) {
 
+		newLine();
 		write("1. We would like you to LOGIN:");
 		newLine();
 		write("username: ");
@@ -419,11 +431,11 @@ Unique<bash_dogs::Console::Line> bash_dogs::Console::onKeyPressed(int key) {
 		setState(CS_INTRO3);
 	}
 	else if (isCurrentState(CS_LOGIN)) {
-		if (_edit(username, key, 9))
+		if (_edit(username, key, 9, "default_username"))
 			setState(CS_CHOOSE);
 	}
 	else if (isCurrentState(CS_CHOOSE)) {
-		if (_edit(address, key, 16)) {
+		if (_edit(address, key, 16, "default_address")) {
 
 			if (level.connect(address))
 				setState(CS_NORMAL);
