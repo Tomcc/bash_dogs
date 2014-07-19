@@ -217,11 +217,17 @@ level(level) {
 		"zip",
 		{ "foo", "bar" }, "");
 
+	logo = { " _____ _____ _____ _____       ____  _____ _____ _____ ",
+		"| __  |  _  |   __|  |  |     |    \|     |   __|   __|",
+		"| __ -|     |__   |     |     |  |  |  |  |  |  |__   |",
+		"|_____|__|__|_____|__|__|_____|____/|_____|_____|_____|",
+		"                        |_____|           ", };
+
 	cursor = new TextArea(this, "debugFont", Vector::ZERO);
 	cursor->addText("_");
 	addChild(cursor, (int)Layers::LL_CONSOLE);
 
-	setState(CS_LOGIN);
+	setState(CS_INTRO1);
 }
 
 bash_dogs::Console::~Console() {
@@ -247,23 +253,24 @@ void bash_dogs::Console::backspace() {
 	}
 }
 
+const Vector interline(0, -0.4);
+
+void bash_dogs::Console::scrollUp( bool force /*= false*/ ) {
+
+	if (getLastLine().position.y < -9 || force) {
+		//lines.front()->dispose = true;
+		lines.erase(lines.begin());
+
+		for (auto l : lines)
+			l->position -= interline;
+	}
+}
+
 bash_dogs::Console::Line bash_dogs::Console::newLine(const String& author) {
-	const Vector interline(0, -0.4);
 
 	String res = commandText;
-	if (lines.size() > 0) {
-
-		if (lines.size() > 20) {
-
-			if (getLastLine().position.y < -9) {
-				//lines.front()->dispose = true;
-				lines.erase(lines.begin());
-
-				for (auto l : lines)
-					l->position -= interline;
-			}
-		}
-	}
+	if (lines.size() > 20)
+		scrollUp();
 
 	commandText = String::EMPTY;
 	currentCommand = Command();
@@ -302,10 +309,20 @@ bool bash_dogs::Console::_edit(String& field, int key, int maxChars) {
 
 void bash_dogs::Console::onStateBegin() {
 
-	if (isCurrentState(CS_LOGIN)) {
-
+	if (isCurrentState(CS_INTRO1)) {
 		newLine();
+		write("#!/bin/bash_dogs");
+	}
+	else if (isCurrentState(CS_INTRO2)) {
 		newLine();
+		write("PRESS ANY KEY TO CONTINUE (YEAH/N)");
+		newLine();
+	}
+	else if (isCurrentState(CS_INTRO3)) {
+		introCount = 0;
+	}
+	else if (isCurrentState(CS_INTRO4)) {
+		introCount = 0;
 
 		write("Welcome To H4XX0R TERMINAL");
 		newLine();
@@ -318,6 +335,8 @@ void bash_dogs::Console::onStateBegin() {
 
 		write("-------------------");
 		newLine();
+	}
+	else if (isCurrentState(CS_LOGIN)) {
 
 		write("1. We would like you to LOGIN:");
 		newLine();
@@ -344,12 +363,62 @@ void bash_dogs::Console::onStateBegin() {
 }
 
 void bash_dogs::Console::onStateLoop(float dt) {
-	
+	if (isCurrentState(CS_INTRO1)) {
+
+		logoTimer += dt;
+		if (logoTimer > 0.15f) {
+
+			if (introCount < 10) {
+				newLine();
+				++introCount;
+			}
+			else if (!logo.empty()) {
+				write(logo.front());
+				logo.erase(logo.begin());
+
+				newLine();
+
+				logoTimer = 0;
+			}
+			else {
+				setState(CS_INTRO2);
+			}
+		}
+	}
+	else if (isCurrentState(CS_INTRO3)) {
+		logoTimer += dt;
+
+		if (logoTimer > 0.05f) {
+			++introCount;
+
+			newLine();
+
+			logoTimer = 0;
+			if (introCount > 17)
+				setState(CS_INTRO4);
+		}
+	}
+	else if (isCurrentState(CS_INTRO4)) {
+		logoTimer += dt;
+
+		if (logoTimer > 0.05f) {
+			++introCount;
+
+			scrollUp(true);
+
+			logoTimer = 0;
+			if (introCount > 17)
+				setState(CS_LOGIN);
+		}
+	}
 }
 
 Unique<bash_dogs::Console::Line> bash_dogs::Console::onKeyPressed(int key) {
 
-	if (isCurrentState(CS_LOGIN)) {
+	if (isCurrentState(CS_INTRO2)) {
+		setState(CS_INTRO3);
+	}
+	else if (isCurrentState(CS_LOGIN)) {
 		if (_edit(username, key, 9))
 			setState(CS_CHOOSE);
 	}
@@ -432,8 +501,10 @@ void bash_dogs::Console::onAction(float dt) {
 	for (auto& l : lines)
 		l->setVisible(l->canBeRendered());
 
-	cursor->position.x = getLastLine().position.x + getLastLine().getSize().x * getLastLine().scale.x;
-	cursor->position.y = getLastLine().position.y;
+	if (lines.size() > 0) {
+		cursor->position.x = getLastLine().position.x + getLastLine().getSize().x * getLastLine().scale.x;
+		cursor->position.y = getLastLine().position.y;
+	}
 }
 
 Dojo::String bash_dogs::Console::getHelp( int n ) const {

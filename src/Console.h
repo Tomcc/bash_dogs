@@ -13,6 +13,10 @@ namespace bash_dogs {
 	public:
 
 		enum State {
+			CS_INTRO1,
+			CS_INTRO2,
+			CS_INTRO3,
+			CS_INTRO4,
 			CS_LOGIN,
 			CS_CHOOSE,
 			CS_NORMAL
@@ -48,6 +52,8 @@ namespace bash_dogs {
 		void write(const String& s);
 		void backspace();
 
+		void scrollUp(bool force = false);
+
 		typedef struct Line {
 			String cmd; int id;
 		};
@@ -82,6 +88,10 @@ namespace bash_dogs {
 
 		Command currentCommand;
 		String commandText;
+
+		std::vector<String> logo;
+		float logoTimer = 0;
+		int introCount = 0;
 
 		std::vector<TextArea*> lines;
 
