@@ -32,7 +32,7 @@ namespace bash_dogs {
 
 		std::mutex clientSocketMutex;
 
-		void _dispatchCommand(const String& command);
+		String _dispatchCommand(const String& command);
 
 	};
 }

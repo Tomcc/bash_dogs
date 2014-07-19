@@ -24,13 +24,17 @@ RealServer::~RealServer() {
 
 }
 
-void RealServer::_dispatchCommand(const String& command) {
+Dojo::String bash_dogs::RealServer::_dispatchCommand(const String& line) {
 
+	String command = line.substr(0, line.find_first_of(' '));
+
+	if (command == String("network-map") ) {
+		return "LOL";
+	}
+	return "Error";
 }
 
 void RealServer::runCommand(const String& command, const ReplyCallback& callback) {
 
-	_dispatchCommand(command);
-
-	callback("lol");
+	callback(_dispatchCommand(command));
 }
