@@ -17,102 +17,41 @@ String bash_dogs::Console::Command::getParam(int key) {
 		return String::EMPTY;
 }
 
+bash_dogs::Console::Command::Command(const String& command, const String& help) :
+command(command),
+helpText(help) {
+
+
+
+}
+
+void bash_dogs::Console::Command::addParameter(int i, const String& p) {
+	DEBUG_ASSERT(i, "wut");
+
+	parameters[i] = p;
+}
+
+
+int bash_dogs::Console::_keyForChar(char c) const {
+	char caps = c - 32;
+	for (int k = 0; k < ASCII.size(); ++k) {
+		if (ASCII[k] == c || ASCII[k] == caps)
+			return k;
+	}
+	return 0;
+}
+
+void bash_dogs::Console::_addCommand(const String& cmd, const std::vector<String>& parameters, const String& help) {
+
+	auto& c = (command[_keyForChar(cmd[0])] = Command(cmd, help));
+
+	for (auto& p : parameters)
+		c.addParameter(_keyForChar(p[0]), p);
+}
 
 bash_dogs::Console::Console(Level& level, const Vector& pos) :
 Object(&level, pos),
 level(level) {
-
-	newLine();
-	newLine();
-
-	write("Welcome To HAXXOR TERMINAL");
-	newLine();
-
-	write("  (c)2054 T.C. - G.P.");
-	newLine();
-
-	write("TYPE SHIT TO HACKER");
-	newLine();
-
-	write("-------------------");
-	newLine();
-
-	cursor = new TextArea(this, "debugFont", Vector::ZERO);
-	cursor->addText("_");
-	addChild(cursor, (int)Layers::LL_CONSOLE);
-
-	command.resize(256);
-
-	//initialize commands
-
-	//
-	command[KC_A] = Command("alert-system", { { KC_F, "fire-splines" }, { KC_S, "security-splice" } }, 
-		"");
-
-	command[KC_B] = Command("ban", { { KC_N, "--no-mercy" }, { KC_D, "delete-userdir" }, { KC_B, "bash" } }, 
-		"");
-	
-	command[KC_C] = Command("changedir", { { KC_S, "shell-builtin" }, { KC_G, "globpath" }, { KC_A, "action=builtin" } },
-		"Jumps to an open file or directory");
-
-	//deletes a file or directory
-	command[KC_D] = Command("delete", { { KC_R, "recursive" }, { KC_I, "ignore-fail-on-non-empty" }, { KC_P, "parents" } },
-		"Deletes an open file or directory");
-
-	command[KC_E] = Command("entropy", { { KC_R, "reticulate-splines" }, { KC_I, "instruct-object" } },
-		"Teleports the opponent at random");
-
-	command[KC_F] = Command("filesystem-check", { { KC_F, "fragcheck=YES" }, { KC_D, "discard" }, { KC_L, "l=DIRECTORY_LOCK" } },
-		"Restores a deleted file");
-
-	command[KC_G] = Command("goto", { { KC_F, "foo" }, { KC_B, "bar" } },
-		"");
-
-	command[KC_H] = Command("hide", { { KC_F, "foo" }, { KC_B, "bar" } },
-		"Make an open or locked file unknown");
-
-	command[KC_I] = Command("install-get", { { KC_F, "foo" }, { KC_B, "bar" } },
-		"");
-
-	command[KC_J] = Command("jump-to", { { KC_S, "--skip-subdir" }, { KC_N, "no-symlinks" }, { KC_Z, "zap-tree" } },
-		"");
-
-	command[KC_K] = Command("key-generate", { { KC_F, "foo" }, { KC_B, "bar" } },
-		"Unlocks a locked file");
-
-	command[KC_L] = Command("list-files", { { KC_F, "foo" }, { KC_B, "bar" } },
-		"If in a folder, discovers all files");
-
-	command[KC_M] = Command("mount-fs", { { KC_M, "make-runbindable" }, { KC_B, "bind=/dev/root/usr" }, { KC_N, "no-canonicalize" } },
-		"");
-	
-	command[KC_N] = Command("network-map", { { KC_E, "exclude-external" }, { KC_O, "open|closed" }, { KC_T, "top-ports" } },
-		"Shows a part of the network");
-	
-	command[KC_O] = Command("open", { { KC_F, "foo" }, { KC_B, "bar" } },"");
-	command[KC_P] = Command("perl", { { KC_F, "foo" }, { KC_B, "bar" } },"");
-
-	command[KC_Q] = Command("quit", { { KC_A, "are-you-sure=Y/N" } },
-		"Quits the game");
-
-	command[KC_R] = Command("rtfm", { { KC_D, "dude" }, { KC_G, "gpresult" }, { KC_E, "endlocal" } },
-		"Prints out this list");
-
-	command[KC_S] = Command("sort", { { KC_F, "foo" }, { KC_B, "bar" } },"");
-	command[KC_T] = Command("tar-lz", { { KC_F, "foo" }, { KC_B, "bar" } },"");
-
-	command[KC_U] = Command("unlink", { { KC_F, "foo" }, { KC_B, "bar" } },
-		"Makes a known file unknown");
-
-	command[KC_V] = Command("view", { { KC_F, "foo" }, { KC_B, "bar" } },
-		"Makes an unknown file known");
-
-	command[KC_W] = Command("wget", { { KC_F, "foo" }, { KC_B, "bar" } },
-		"Starts a download to transfer the file to the attacker");
-	
-	command[KC_X] = Command("x-conf", { { KC_F, "foo" }, { KC_B, "bar" } },"");
-	command[KC_Y] = Command("yzf", { { KC_F, "foo" }, { KC_B, "bar" } },"");
-	command[KC_Z] = Command("zip", { { KC_F, "foo" }, { KC_B, "bar" } },"");
 
 	ASCII.resize(256);
 	ASCII[KC_A] = 'A';
@@ -152,6 +91,149 @@ level(level) {
 	ASCII[KC_8] = '8';
 	ASCII[KC_9] = '9';
 	ASCII[KC_PERIOD] = '.';
+
+	command.resize(256);
+
+	//initialize commands
+
+	_addCommand(
+		"alert-system",
+		{ "fire-splines", "security-splice" },
+		"");
+
+	_addCommand(
+		"ban",
+		{ "no-mercy", "delete-userdir", "bash" },
+		"");
+
+	_addCommand(
+		"changedir",
+		{ "shell-builtin", "globpath", "action=builtin" },
+		"Jumps to an open file or directory");
+
+	//deletes a file or directory
+	_addCommand(
+		"delete",
+		{ "recursive", "ignore-fail-on-non-empty", "parents" },
+		"Deletes an open file or directory");
+
+	_addCommand(
+		"entropy",
+		{ "reticulate-splines", "instruct-object" },
+		"Teleports the opponent at random");
+
+	_addCommand(
+		"filesystem-check",
+		{ "fragcheck=YES", "discard", "l=DIRECTORY_LOCK" },
+		"Restores a deleted file");
+
+	_addCommand(
+		"goto",
+		{ "foo", "bar" },
+		"");
+
+	_addCommand(
+		"hide",
+		{ "foo", "bar" },
+		"Make an open or locked file unknown");
+
+	_addCommand(
+		"install-get",
+		{ "foo", "bar" },
+		"");
+
+	_addCommand(
+		"jump-to",
+		{ "skip-subdir", "no-symlinks", "zap-tree" },
+		"Jumps to a discovered file");
+
+	_addCommand(
+		"key-generate",
+		{ "foo", "bar" },
+		"Unlocks a locked file");
+
+	_addCommand(
+		"list-files",
+		{ "foo", "bar" },
+		"If in a folder, discovers all files");
+
+	_addCommand(
+		"mount-fs",
+		{ "make-runbindable", "bind=/dev/root/usr", "no-canonicalize" },
+		"");
+
+	_addCommand(
+		"network-map",
+		{ "exclude-external", "open|closed", "top-ports" },
+		"Shows a part of the network");
+
+	_addCommand(
+		"open",
+		{ "foo", "bar" }, "");
+	_addCommand(
+		"perl",
+		{ "foo", "bar" }, "");
+
+	_addCommand(
+		"quit",
+		{ "are-you-sure=Y/N" },
+		"Quits the game");
+
+	_addCommand(
+		"rtfm",
+		{ "dude", "gpresult", "endlocal" },
+		"Prints out this list");
+
+	_addCommand(
+		"sort",
+		{ "foo", "bar" }, "");
+	_addCommand(
+		"tar-lz",
+		{ "foo", "bar" }, "");
+
+	_addCommand(
+		"unlink",
+		{ "foo", "bar" },
+		"Makes a known file unknown");
+
+	_addCommand(
+		"view",
+		{ "foo", "bar" },
+		"Makes an unknown file known");
+
+	_addCommand(
+		"wget",
+		{ "foo", "bar" },
+		"Starts a download to transfer the file to the attacker");
+
+	_addCommand(
+		"x-conf",
+		{ "foo", "bar" }, "");
+	_addCommand(
+		"yzf",
+		{ "foo", "bar" }, "");
+	_addCommand(
+		"zip",
+		{ "foo", "bar" }, "");
+
+	newLine();
+	newLine();
+
+	write("Welcome To HAXXOR TERMINAL");
+	newLine();
+
+	write("  (c)2054 T.C. - G.P.");
+	newLine();
+
+	write("TYPE SHIT TO HACKER");
+	newLine();
+
+	write("-------------------");
+	newLine();
+
+	cursor = new TextArea(this, "debugFont", Vector::ZERO);
+	cursor->addText("_");
+	addChild(cursor, (int)Layers::LL_CONSOLE);
 
 	setState(CS_LOGIN);
 }

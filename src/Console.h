@@ -30,11 +30,9 @@ namespace bash_dogs {
 
 			Command() {}
 
-			Command(const String& command, const std::unordered_map<int, String>& parameters, const String& help) :
-				command(command),
-				parameters(parameters),
-				helpText(help) {
-			}
+			Command(const String& command, const String& help);
+
+			void addParameter(int i, const String& p);
 
 			String getParam(int action);
 
@@ -91,6 +89,11 @@ namespace bash_dogs {
 		virtual void onStateLoop(float dt);
 
 		virtual void onStateEnd();
+
+		void _addCommand(const String& command, const std::vector<String>& parameters, const String& help);
+
+		int _keyForChar(char c) const;
+
 	private:
 	};
 
