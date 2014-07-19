@@ -36,6 +36,10 @@ namespace bash_dogs {
 			return server.get();
 		}
 
+		Console& getConsole() const {
+			return *console;
+		}
+
     protected:
 
 		Unique<Server> server;

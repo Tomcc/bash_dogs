@@ -17,7 +17,7 @@ namespace bash_dogs {
 	{
 	public:
 
-		RealServer();
+		RealServer(Level& level);
 
 		~RealServer();
 
@@ -28,6 +28,8 @@ namespace bash_dogs {
 		}
 
 	protected:
+		Level& level;
+
 		Unique<Poco::Net::ServerSocket> serverSocket;
 		Unique<Poco::Net::StreamSocket> clientSocket;
 

@@ -2,6 +2,8 @@
 
 #include "Console.h"
 #include "Level.h"
+#include <xlocale>
+#include <locale>
 
 using namespace Dojo;
 using namespace bash_dogs;
@@ -111,7 +113,6 @@ level(level) {
 		{ "shell-builtin", "globpath", "action=builtin" },
 		"Jumps to an open file or directory");
 
-	//deletes a file or directory
 	_addCommand(
 		"delete",
 		{ "recursive", "ignore-fail-on-non-empty", "parents" },
@@ -216,21 +217,6 @@ level(level) {
 		"zip",
 		{ "foo", "bar" }, "");
 
-	newLine();
-	newLine();
-
-	write("Welcome To HAXXOR TERMINAL");
-	newLine();
-
-	write("  (c)2054 T.C. - G.P.");
-	newLine();
-
-	write("TYPE SHIT TO HACKER");
-	newLine();
-
-	write("-------------------");
-	newLine();
-
 	cursor = new TextArea(this, "debugFont", Vector::ZERO);
 	cursor->addText("_");
 	addChild(cursor, (int)Layers::LL_CONSOLE);
@@ -317,6 +303,22 @@ bool bash_dogs::Console::_edit(String& field, int key, int maxChars) {
 void bash_dogs::Console::onStateBegin() {
 
 	if (isCurrentState(CS_LOGIN)) {
+
+		newLine();
+		newLine();
+
+		write("Welcome To H4XX0R TERMINAL");
+		newLine();
+
+		write("  (c)2054 T.C. - G.P.");
+		newLine();
+
+		write("TYPE SHIT TO HACKER");
+		newLine();
+
+		write("-------------------");
+		newLine();
+
 		write("1. We would like you to LOGIN:");
 		newLine();
 		write("username: ");
@@ -432,4 +434,32 @@ void bash_dogs::Console::onAction(float dt) {
 
 	cursor->position.x = getLastLine().position.x + getLastLine().getSize().x * getLastLine().scale.x;
 	cursor->position.y = getLastLine().position.y;
+}
+
+Dojo::String bash_dogs::Console::getHelp( int n ) const {
+	auto cmds = command;
+
+	{
+		for (int i = 0; i < cmds.size(); ++i) {
+			auto& c = cmds[i];
+
+			if (!c || c.helpText.empty() ) {
+				cmds.erase(cmds.begin() + i);
+				--i;
+			}
+		}
+	}
+
+	//now remove stuff until n remain
+	while (cmds.size() > n)
+		cmds.erase(cmds.begin() + Math::rangeRandom(0, cmds.size()));
+
+	//finally print out help
+	std::locale loc;
+	String helpText = "echo={";
+	for (auto& cmd : cmds)
+		helpText += "\"" + cmd.command.toUpper() + ": " + cmd.helpText + "\"";
+
+	helpText += '}';
+	return helpText;
 }

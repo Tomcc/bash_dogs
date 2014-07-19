@@ -164,7 +164,7 @@ void Level::onBegin()
 bool bash_dogs::Level::connect(const String& address) {
 
 	if (address == String("LOCALHOST")) {
-		server = make_unique<RealServer>();
+		server = make_unique<RealServer>(*this);
 	}
 	else {
 
@@ -231,13 +231,20 @@ void bash_dogs::Level::onButtonPressed(Dojo::InputDevice* j, int action) {
 			getGame()->stop();
 		}
 		else {
-			server->runCommand(finishedLine->cmd, [](const String& replyText) {
+			server->runCommand(finishedLine->cmd, [this](const String& replyText) {
 				StringReader reader(replyText);
 				Table reply;
 
 				reply.deserialize(reader);
 
-
+				//print out stuff if needed
+				if (reply.existsAs("echo", Table::FT_TABLE)) {
+					auto echotable = reply.getTable("echo");
+					for (int i = 0; i < echotable->getAutoMembers(); ++i) {
+						console->write(echotable->getString(i));
+						console->newLine((i < echotable->getAutoMembers() - 1) ? String::EMPTY : console->getUserName());
+					}
+				}
 			});
 		}
 	}

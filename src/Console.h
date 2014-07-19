@@ -58,6 +58,12 @@ namespace bash_dogs {
 			return *lines.back();
 		}
 
+		String getHelp(int n) const;
+
+		const String& getUserName() const {
+			return username;
+		}
+
 		virtual void onAction(float dt) override;
 
 		Unique<Line> onKeyPressed(int key);
@@ -72,6 +78,7 @@ namespace bash_dogs {
 		float characterRefresh = 0;
 
 		String username, address;
+		String helpText;
 
 		Command currentCommand;
 		String commandText;
