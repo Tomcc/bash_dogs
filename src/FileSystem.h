@@ -6,8 +6,7 @@ namespace bash_dogs {
 	class File;
 	class Level;
 
-	class FileSystem : public Object
-	{
+	class FileSystem : public Object	{
 	public:
 
 		const bool graphics;

@@ -5,21 +5,21 @@
 
 using namespace bash_dogs;
 
-Mesh* bash_dogs::File::_meshForState(ResourceGroup& rg, State state, Type type) {
+Mesh* File::_meshForState(ResourceGroup& rg, State state, Type type) {
 	switch (state)
 	{
-	case bash_dogs::File::FS_UNKNOWN:
+	case FS_UNKNOWN:
 		return rg.getMesh("unknownFile");
-	case bash_dogs::File::FS_LOCKED:
+	case FS_LOCKED:
 		return rg.getMesh("lockedFile");
 	case FS_DELETED:
 		return rg.getMesh("deletedFile");
-	case bash_dogs::File::FS_OPEN:
+	case FS_OPEN:
 		switch (type)
 		{	
-		case bash_dogs::File::T_FILE:
+		case File::T_FILE:
 			return rg.getMesh("file");
-		case bash_dogs::File::T_FOLDER:
+		case File::T_FOLDER:
 			return rg.getMesh("folder");
 		case T_CACHE:
 			return rg.getMesh("cache");
@@ -29,7 +29,7 @@ Mesh* bash_dogs::File::_meshForState(ResourceGroup& rg, State state, Type type) 
 	}
 }
 
-bash_dogs::File::File(FileSystem& parent, const Vector& pos, const String& name, Type type, State initialState) :
+File::File(FileSystem& parent, const Vector& pos, const String& name, Type type, State initialState) :
 Object(&parent, pos),
 state(initialState),
 type(type),
@@ -61,7 +61,7 @@ File(
 
 }
 
-Unique<Table> bash_dogs::File::serialize() const {
+Unique<Table> File::serialize() const {
 	auto t = make_unique<Table>();
 
 	t->setName(name);
@@ -73,7 +73,7 @@ Unique<Table> bash_dogs::File::serialize() const {
 	return t;
 }
 
-File& bash_dogs::File::addFile(File& file) {
+File& File::addFile(File& file) {
 	DEBUG_ASSERT(type == T_FOLDER, "Files have no subfiles");
 
 	subFiles.push_back(&file);
@@ -84,7 +84,7 @@ File& bash_dogs::File::addFile(File& file) {
 	return file;
 }
 
-void bash_dogs::File::select(bool selected_) {
+void File::select(bool selected_) {
 	selected = selected_;
 	baseScale = selected_ ? 0.8f : 0.5f;
 

@@ -6,4 +6,4 @@ skip_intro
 default_address = "LOCALHOST"
 default_username = "TOMMO"
 
-music = 1
+music = 0

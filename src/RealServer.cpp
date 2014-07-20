@@ -35,19 +35,23 @@ RealServer::~RealServer() {
 
 }
 
-Dojo::String bash_dogs::RealServer::_dispatchCommand(const String& line) {
+Dojo::String bash_dogs::RealServer::_dispatchCommand(const String& line, const String& param) {
 
 	String command = line.substr(0, line.find_first_of(' '));
 
-	if (command == String("rtfm") ) {
+	if (command == String("rtfm")) {
 
 		//pick some random commands
 		return level.getConsole().getHelp(15);
 	}
-	return "Error";
+	else if (command == String("changedir")) {
+		return "setdir=\"" + param.substr(10) + "\" echo={\"Directory changed\"}";
+	}
+	else
+		return String::EMPTY;
 }
 
-void RealServer::runCommand(const String& command, const ReplyCallback& callback) {
+void RealServer::runCommand(const String& command, const String& param, const ReplyCallback& callback) {
 
-	callback(_dispatchCommand(command));
+	callback(_dispatchCommand(command, param));
 }

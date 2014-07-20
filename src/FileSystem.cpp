@@ -125,9 +125,8 @@ void bash_dogs::FileSystem::initialize() {
 	}
 
 	Vector halfDim = (max - min) * 0.5f;
-	for (auto n : nodes) {
+	for (auto n : nodes)
 		n->position -= min + halfDim;
-	}
 
 	//center the stuff
 
@@ -152,6 +151,8 @@ void bash_dogs::FileSystem::initialize() {
 
 void FileSystem::onAction(float dt) {
 	rotate(0.03f, Vector::NEGATIVE_UNIT_Z);
+
+	
 
 	Object::onAction(dt);
 }

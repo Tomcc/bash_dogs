@@ -243,7 +243,7 @@ void bash_dogs::Level::onButtonPressed(Dojo::InputDevice* j, int action) {
 			getGame()->stop();
 		}
 		else {
-			server->runCommand(finishedLine->cmd, [this](const String& replyText) {
+			server->runCommand(finishedLine->cmd, finishedLine->parameters, [this](const String& replyText) {
 				StringReader reader(replyText);
 				Table reply;
 
@@ -256,6 +256,10 @@ void bash_dogs::Level::onButtonPressed(Dojo::InputDevice* j, int action) {
 						console->write(echotable->getString(i));
 						console->newLine((i < echotable->getAutoMembers() - 1) ? String::EMPTY : console->getUserName());
 					}
+				}
+
+				if (reply.existsAs("setdir", Table::FT_STRING)) {
+
 				}
 			});
 		}

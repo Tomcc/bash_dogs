@@ -21,7 +21,7 @@ namespace bash_dogs {
 
 		~RealServer();
 
-		virtual void runCommand(const String& command, const ReplyCallback& callback) override;
+		virtual void runCommand(const String& command, const String& param, const ReplyCallback& callback) override;
 
 		virtual bool isLocalHost() const override {
 			return true;
@@ -37,7 +37,7 @@ namespace bash_dogs {
 
 		Unique<FileSystem> masterFileSystem;
 
-		String _dispatchCommand(const String& command);
+		String _dispatchCommand(const String& command, const String& param);
 
 	};
 }

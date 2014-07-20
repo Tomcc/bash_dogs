@@ -15,7 +15,7 @@ namespace bash_dogs {
 			return false;
 		}
 
-		virtual void runCommand(const String& command, const ReplyCallback& callback) override;
+		virtual void runCommand(const String& command, const String& param, const ReplyCallback& callback) override;
 
 		bool isConnected() const {
 			return socket != nullptr;

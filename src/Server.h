@@ -9,7 +9,7 @@ namespace bash_dogs {
 
 		typedef std::function<void(const String& reply)> ReplyCallback;
 
-		virtual void runCommand(const String& command, const ReplyCallback& callback) = 0;
+		virtual void runCommand(const String& command, const String& param, const ReplyCallback& callback) = 0;
 
 		virtual bool isLocalHost() const = 0;
 

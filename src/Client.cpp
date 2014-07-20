@@ -19,7 +19,7 @@ bash_dogs::Client::Client(const String& address) {
 	}
 }
 
-void bash_dogs::Client::runCommand(const String& command, const ReplyCallback& callback) {
+void bash_dogs::Client::runCommand(const String& command, const String& param, const ReplyCallback& callback) {
 
 
 

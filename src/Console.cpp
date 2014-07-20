@@ -21,9 +21,8 @@ String bash_dogs::Console::Command::getParam(int key) {
 
 bash_dogs::Console::Command::Command(const String& command, const String& help) :
 command(command),
-helpText(help) {
-
-
+helpText(help)
+{
 
 }
 
@@ -110,7 +109,7 @@ level(level) {
 
 	_addCommand(
 		"changedir",
-		{ "shell-builtin", "globpath", "action=builtin" },
+		{},
 		"Jumps to an open file or directory");
 
 	_addCommand(
@@ -272,9 +271,16 @@ void bash_dogs::Console::scrollUp( bool force /*= false*/ ) {
 
 bash_dogs::Console::Line bash_dogs::Console::newLine(const String& author) {
 
-	String res = commandText;
-	if (lines.size() > 20)
-		scrollUp();
+	const int usernameLength = username.size() + 1;
+	String param, res = commandText;
+	if (lines.size()>0) {
+		int cmdlen = usernameLength + commandText.size() + 2;
+		if (commandText.size() > 0 && getLastLine().getContent().size() > cmdlen)
+			param = getLastLine().getContent().substr(cmdlen);
+
+		if (lines.size() > 20)
+			scrollUp();
+	}
 
 	commandText = String::EMPTY;
 	currentCommand = Command();
@@ -284,20 +290,20 @@ bash_dogs::Console::Line bash_dogs::Console::newLine(const String& author) {
 	addChild(line, (int)Layers::LL_CONSOLE);
 	line->addText( author + "> ");
 	line->color = Color::GREEN;
-	line->setVisibleCharacters(username.size() + 1);
+	line->setVisibleCharacters(usernameLength);
 	line->setVisible(false);
 	line->setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_DST_COLOR);
 
 	lines.push_back(line);
 	++lastLineID;
 
-	return { res, lastLineID - 1 };
+	return { res, param, lastLineID - 1 };
 }
 
 bool bash_dogs::Console::_edit(String& field, int key, int maxChars, const String& defaultName) {
 	auto c = ASCII[key];
 
-	if (Platform::getSingleton()->getUserConfiguration().existsAs(defaultName, Table::FT_STRING)) {
+	if (!defaultName.empty() && Platform::getSingleton()->getUserConfiguration().existsAs(defaultName, Table::FT_STRING)) {
 		field = Platform::getSingleton()->getUserConfiguration().getString(defaultName);
 		return true;
 	}
@@ -363,15 +369,11 @@ void bash_dogs::Console::onStateBegin() {
 		write("address: ");
 	}
 	else if (isCurrentState(CS_NORMAL)) {
-		newLine();
-		write("3. WELCOME, '" + username + "'");
-		newLine();
-		if (level.getServer()->isLocalHost())
-			write("   PREPARE TO DEFEND THE MAINFRAME");
-		else
-			write("   ATTACKING `" + address + "'");
 
-		newLine(username);
+	}
+	else if (isCurrentState(CS_FREEFORM_INPUT)) {
+		commandField.clear();
+		write(" --target=");
 	}
 }
 
@@ -432,14 +434,26 @@ Unique<bash_dogs::Console::Line> bash_dogs::Console::onKeyPressed(int key) {
 		setState(CS_INTRO3);
 	}
 	else if (isCurrentState(CS_LOGIN)) {
-		if (_edit(username, key, 9, "default_username"))
+		if (_edit(username, key, 5, "default_username"))
 			setState(CS_CHOOSE);
 	}
 	else if (isCurrentState(CS_CHOOSE)) {
 		if (_edit(address, key, 16, "default_address")) {
 
-			if (level.connect(address))
+			if (level.connect(address)) {
+
+				newLine();
+				write("3. WELCOME, '" + username + "'");
+				newLine();
+				if (level.getServer()->isLocalHost())
+					write("   PREPARE TO DEFEND THE MAINFRAME");
+				else
+					write("   ATTACKING `" + address + "'");
+
+				newLine(username);
+
 				setState(CS_NORMAL);
+			}
 			else {
 				address = String::EMPTY;
 
@@ -451,8 +465,12 @@ Unique<bash_dogs::Console::Line> bash_dogs::Console::onKeyPressed(int key) {
 		}
 	}
 	else if (isCurrentState(CS_NORMAL)) {
-		if (key == KC_RETURN)
-			return make_unique<Line>(newLine(username));
+		if (key == KC_RETURN) {
+			if (currentCommand.hasFreeFormInput())
+				setState(CS_FREEFORM_INPUT);
+			else
+				return make_unique<Line>(newLine(username));
+		}
 		else if (!currentCommand) {
 
 			if (key == KC_TAB) {
@@ -471,12 +489,17 @@ Unique<bash_dogs::Console::Line> bash_dogs::Console::onKeyPressed(int key) {
 				write(" --" + param);
 		}
 	}
-
+	else if (isCurrentState(CS_FREEFORM_INPUT)) {
+		if (_edit(commandField, key, 10, "") && commandField.size() > 0) {
+			setState(CS_NORMAL);
+			return make_unique<Line>(newLine(username));
+		}
+	}
 	return nullptr;
 }
 
 void bash_dogs::Console::onStateEnd() {
-	
+
 }
 
 void bash_dogs::Console::onAction(float dt) {

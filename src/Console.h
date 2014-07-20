@@ -19,7 +19,8 @@ namespace bash_dogs {
 			CS_INTRO4,
 			CS_LOGIN,
 			CS_CHOOSE,
-			CS_NORMAL
+			CS_NORMAL,
+			CS_FREEFORM_INPUT
 		};
 
 		template < typename T >
@@ -40,6 +41,10 @@ namespace bash_dogs {
 
 			String getParam(int action);
 
+			bool hasFreeFormInput() const {
+				return command.size() > 0 && parameters.empty();
+			}
+
 			operator bool() const {
 				return !command.empty();
 			}
@@ -55,7 +60,9 @@ namespace bash_dogs {
 		void scrollUp(bool force = false);
 
 		typedef struct Line {
-			String cmd; int id;
+			String cmd; 
+			String parameters;
+			int id;
 		};
 
 		Line newLine(const String& author = String::EMPTY);
@@ -83,7 +90,7 @@ namespace bash_dogs {
 		float blink = 0;
 		float characterRefresh = 0;
 
-		String username, address;
+		String username, address, commandField;
 		String helpText;
 
 		Command currentCommand;
