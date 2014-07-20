@@ -3,6 +3,7 @@
 #include "RealServer.h"
 #include "Console.h"
 #include "Level.h"
+#include "File.h"
 
 #include <Poco/Net/ServerSocket.h>
 #include "FileSystem.h"
@@ -45,7 +46,21 @@ Dojo::String bash_dogs::RealServer::_dispatchCommand(const String& line, const S
 		return level.getConsole().getHelp(15);
 	}
 	else if (command == String("changedir")) {
-		return "setdir=\"" + param.substr(10) + "\" echo={\"Directory changed\"}";
+		//HACK
+		String name = param.substr(9);
+		auto& fs = *level.getFileSystem();
+
+		auto file = fs.getFile(name);
+		if (!file)
+			return "echo={\"ERROR: FILE NOT FOUND\"}";
+		else if (file->isDeleted())
+			return "echo={\"ERROR: FILE IS DELETED\"}";
+		else if (file->isLocked())
+			return "echo={\"ERROR: FILE IS LOCKED\"}";
+		else if (!fs.canMoveBetween(*file, fs.getSelected() ))
+			return "echo={\"ERROR: FILE IS NOT REACHABLE FROM HERE\"}";
+		else
+			return "setdir=\"" + name + "\" echo={\"Directory changed\"}";
 	}
 	else
 		return String::EMPTY;

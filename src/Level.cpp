@@ -259,7 +259,7 @@ void bash_dogs::Level::onButtonPressed(Dojo::InputDevice* j, int action) {
 				}
 
 				if (reply.existsAs("setdir", Table::FT_STRING)) {
-
+					fileSystem->select(reply.getString("setdir"));
 				}
 			});
 		}

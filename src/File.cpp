@@ -43,11 +43,17 @@ localPos(pos) {
 		icon->cullMode = RenderState::CM_DISABLED;
 		parent.getGameState()->addChild(icon, (int)Layers::LL_GRAPH_WIREFRAME);
 
+		if (type == File::T_CACHE) {
+			icon->rotate(20, Vector::UNIT_X);
+		}
+
 		label = new TextArea(this, "debugFont", pos + Vector::NEGATIVE_UNIT_Y, true);
 		label->addText(name);
 		label->pixelScale = 0.5f;
 		parent.getGameState()->addChild(label, (int)Layers::LL_GRAPH);
 	}
+
+	parent._fileAdded(*this);
 }
 
 File::File(FileSystem& parent,Unique<Table> desc) :
@@ -95,7 +101,7 @@ void File::select(bool selected_) {
 void File::onAction(float dt) {
 	
 	icon->position = getWorldPosition();
-	label->position = icon->position + Vector(0,0.35f);
+	label->position = icon->position - Vector(0,0.35f);
 
 	if (selected)
 		icon->rotate(0.7f, Vector::UNIT_Y);
@@ -118,4 +124,12 @@ void File::onAction(float dt) {
 		}
 	}
 	Object::onAction(dt);
+}
+
+bool bash_dogs::File::isParentOf(File& file) const {
+	for (auto& f : subFiles) {
+		if (f == &file)
+			return true;
+	}
+	return false;
 }

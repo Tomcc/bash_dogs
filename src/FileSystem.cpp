@@ -16,20 +16,27 @@ graphics(graphics) {
 
 	if (graphics) {
 		addChild(root);
-		root->select(true);
+		select("ROOT");
 	}
 }
 
 void bash_dogs::FileSystem::_makeSubFile(File& parent, int step, int& cachesPlaced, std::vector<File*>& nodes) {
+
+	static std::vector<String> filenames = { "DEV_A", "DEV_B", "DEV_C", "DEV_D", "DEV_E", "DEV_F", "DEV_G", "DEV_H", "DEV_I", "DEV_L", "DEV_M", "DEV_N", "DEV_O", "DEV_P", "DEV_Q", "DEV_R" };
 
 	int childs = Math::rangeRandom(0, 5);
 
 	for (int i = 0; i < childs; ++i) {
 
 		File::Type t;
+		File::State s = File::FS_OPEN;
+		String name = "???";
+
 		int type = Math::rangeRandom(0, 100);
 		if (type < 40 && step > 1 && cachesPlaced <= 3) {
 			t = File::T_CACHE;
+			s = File::FS_OPEN;
+			name = "DATA_" + String(cachesPlaced);
 			cachesPlaced++;
 		}
 		else if (type < 70)
@@ -37,10 +44,20 @@ void bash_dogs::FileSystem::_makeSubFile(File& parent, int step, int& cachesPlac
 		else
 			t = File::T_FOLDER;
 
+		if (t != File::T_CACHE) {
+			if (filenames.size() > 0) {
+				int nameIdx = Math::rangeRandom(0, filenames.size());
+				name = filenames[nameIdx];
+				filenames.erase(filenames.begin() + nameIdx);
+			}
+			else
+				s = File::FS_UNKNOWN;
+		}
+
 		float r = 1.5f;
 		Vector pos = parent.position + Math::randomVector(Vector(-r, -r, -0.2f), Vector(r, r, 0.2f));
 
-		auto f = new File(*this, pos, "random", t, File::FS_OPEN);
+		auto f = new File(*this, pos, name, t, s);
 		parent.addFile(*f);
 		nodes.push_back(f);
 
@@ -149,10 +166,33 @@ void bash_dogs::FileSystem::initialize() {
 	addChild(r, (int)Layers::LL_GRAPH);
 }
 
+void bash_dogs::FileSystem::_fileAdded(File& file) {
+	nameMap[file.name] = &file;
+}
+
+void bash_dogs::FileSystem::select(const String& name) {
+	if (selected)
+		selected->select(false);
+
+	selected = nameMap[name];
+	selected->select(true);
+}
+
+File* bash_dogs::FileSystem::getFile(const String& name) const {
+	auto elem = nameMap.find(name);
+	return elem != nameMap.end() ? elem->second : nullptr;
+}
+
+File& bash_dogs::FileSystem::getSelected() const {
+	return *selected;
+}
+
+bool bash_dogs::FileSystem::canMoveBetween(File& A, File& B) const {
+	return A.isParentOf(B) || B.isParentOf(A);
+}
+
 void FileSystem::onAction(float dt) {
 	rotate(0.03f, Vector::NEGATIVE_UNIT_Z);
-
-	
 
 	Object::onAction(dt);
 }

@@ -10,6 +10,7 @@ namespace bash_dogs {
 	class File : public Object
 	{
 	public:
+		const String name;
 
 		//HACK
 		b2Body* body = nullptr;
@@ -35,12 +36,21 @@ namespace bash_dogs {
 
 		File& addFile(File& file);
 
+		bool isParentOf(File& file) const;
+
 		virtual void onAction(float dt);
 
 		Unique<Table> serialize() const;
 
 		const std::vector<File*>& getSubFiles() const {
 			return subFiles;
+		}
+
+		bool isDeleted() const {
+			return state == FS_DELETED;
+		}
+		bool isLocked() const {
+			return state == FS_LOCKED;
 		}
 
 		void select(bool selected);
@@ -51,7 +61,6 @@ namespace bash_dogs {
 
 		FileSystem& fs;
 
-		const String name;
 		State state;
 
 		bool selected = false;

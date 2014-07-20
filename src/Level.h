@@ -40,6 +40,10 @@ namespace bash_dogs {
 			return *console;
 		}
 
+		FileSystem* getFileSystem() const {
+			return fileSystem;
+		}
+
     protected:
 
 		Unique<Server> server;

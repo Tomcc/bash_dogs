@@ -92,6 +92,7 @@ level(level) {
 	ASCII[KC_8] = '8';
 	ASCII[KC_9] = '9';
 	ASCII[KC_PERIOD] = '.';
+	ASCII[KC_MINUS] = '_';
 
 	command.resize(256);
 
